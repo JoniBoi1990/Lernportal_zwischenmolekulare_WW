@@ -504,6 +504,132 @@ progress {
   color: var(--ok);
 }
 
+.tab-btn.out-of-path {
+  opacity: 0.48;
+}
+
+.tab-btn.out-of-path:hover,
+.tab-btn.out-of-path[aria-selected="true"] {
+  opacity: 1;
+}
+
+.tab-btn.in-active-path:not([aria-selected="true"]) {
+  color: var(--text-main);
+}
+
+/* ==========================================================================
+   LERNPFAD-AUSWAHL ZU BEGINN
+   ========================================================================== */
+.path-hub {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 0.9rem 1.1rem;
+  margin-block-end: 1.05rem;
+  box-shadow: var(--shadow-sm);
+}
+
+.path-hub-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+  margin-block-end: 0.75rem;
+}
+
+.path-hub-kicker {
+  display: block;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--primary);
+}
+
+.path-hub-top h2 {
+  margin: 0.05rem 0 0;
+  font-size: 1.06rem;
+  line-height: 1.25;
+}
+
+.path-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+@media (max-width: 860px) {
+  .path-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.path-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: start;
+  gap: 0.35rem;
+  padding: 0.78rem 0.9rem;
+  border-radius: var(--radius-md);
+  border: 1.5px solid var(--border);
+  background: var(--bg-subtle);
+  color: var(--text-main);
+  font-family: inherit;
+  cursor: pointer;
+  transition: border-color 0.15s ease, background-color 0.15s ease, transform 0.12s ease;
+}
+
+.path-card:hover {
+  border-color: var(--primary);
+  background: var(--bg-hover);
+}
+
+.path-card.active {
+  border-color: var(--primary);
+  background: var(--primary-soft);
+  box-shadow: 0 0 0 1px var(--primary);
+}
+
+.path-pill {
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 0.14rem 0.5rem;
+  border-radius: 999px;
+  background: var(--bg-card);
+  border: 1px solid var(--primary);
+  color: var(--primary);
+}
+
+.path-pill-teal {
+  border-color: var(--teal);
+  color: var(--teal);
+}
+
+.path-pill-warn {
+  border-color: var(--warn);
+  color: var(--warn);
+}
+
+.path-card-title {
+  font-size: 0.94rem;
+  line-height: 1.3;
+}
+
+.path-card-desc {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  line-height: 1.38;
+  flex: 1;
+}
+
+.path-card-steps {
+  font-size: 0.79rem;
+  font-weight: 700;
+  color: var(--primary);
+}
+
 /* ==========================================================================
    MAIN & PANELS
    ========================================================================== */
@@ -796,8 +922,11 @@ canvas {
 #canvasModel1 { aspect-ratio: 660 / 270; }
 #canvasModel2 { aspect-ratio: 660 / 310; }
 #canvasModel3Lupe { aspect-ratio: 660 / 250; }
-#canvasModel3Boil { aspect-ratio: 660 / 190; }
-#canvasModel4 { aspect-ratio: 660 / 310; }
+#canvasModel4London { aspect-ratio: 660 / 270; }
+#canvasModel4Alkane { aspect-ratio: 660 / 220; }
+#canvasModel5Boil { aspect-ratio: 660 / 210; }
+#canvasModel5AlkaneChart { aspect-ratio: 660 / 220; }
+#canvasModel6 { aspect-ratio: 660 / 310; }
 
 #canvasModel3Lupe {
   touch-action: none;
@@ -809,7 +938,8 @@ canvas {
 }
 
 #canvasModel1,
-#canvasModel4 {
+#canvasModel5AlkaneChart,
+#canvasModel6 {
   cursor: pointer;
 }
 
@@ -1272,6 +1402,111 @@ input[type="range"]:focus-visible {
   font-size: 0.88rem;
 }
 
+/* ==========================================================================
+   TRANSFER-BOX (ARBEITSBLATT-ERKLÄRUNGSAUFGABE)
+   ========================================================================== */
+.transfer-box {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-inline-start: 4px solid var(--teal);
+  border-radius: var(--radius-lg);
+  padding: 1rem 1.15rem;
+  box-shadow: var(--shadow-sm);
+}
+
+.transfer-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-block-end: 0.45rem;
+}
+
+.transfer-head h3 {
+  margin: 0;
+  font-size: 1rem;
+  color: var(--teal);
+}
+
+.transfer-score {
+  font-size: 0.8rem;
+  font-weight: 700;
+  padding: 0.2rem 0.65rem;
+  border-radius: 999px;
+  background: var(--bg-subtle);
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+}
+
+.transfer-score.done {
+  background: var(--ok-bg);
+  border-color: var(--ok);
+  color: var(--ok);
+}
+
+.transfer-prompt {
+  margin: 0 0 0.6rem;
+  font-size: 0.92rem;
+}
+
+.transfer-textarea {
+  inline-size: 100%;
+  padding: 0.65rem 0.8rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background: var(--bg-subtle);
+  color: var(--text-main);
+  font-family: inherit;
+  font-size: 0.9rem;
+  line-height: 1.45;
+  resize: vertical;
+  margin-block-end: 0.55rem;
+}
+
+.keyword-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-block-end: 0.65rem;
+}
+
+.keyword-chip {
+  font-size: 0.78rem;
+  font-weight: 600;
+  padding: 0.22rem 0.58rem;
+  border-radius: 999px;
+  background: var(--bg-subtle);
+  border: 1px dashed var(--border);
+  color: var(--text-muted);
+}
+
+.keyword-chip.matched {
+  background: var(--ok-bg);
+  border-style: solid;
+  border-color: var(--ok);
+  color: var(--ok);
+}
+
+.sample-solution {
+  font-size: 0.88rem;
+  background: var(--bg-subtle);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 0.5rem 0.75rem;
+}
+
+.sample-solution summary {
+  cursor: pointer;
+  font-weight: 700;
+  color: var(--primary);
+}
+
+.sample-solution p {
+  margin: 0.5rem 0 0;
+  line-height: 1.5;
+}
+
 .site-footer {
   text-align: center;
   padding: 0.85rem 1.25rem;
@@ -1370,11 +1605,11 @@ input[type="range"]:focus-visible {
     display: none !important;
   }
 
-  #panel-step5 {
+  #panel-step7 {
     display: block !important;
   }
 
-  #panel-step5[hidden] {
+  #panel-step7[hidden] {
     display: block !important;
     content-visibility: visible !important;
     position: static !important;

@@ -101,109 +101,157 @@
     step3: [
       {
         id: "s3q1",
-        question: "1. Vergleiche Wasser (Sdp. 100 °C) und Schwefeldioxid (Sdp. −10 °C): Welche WW wirken jeweils zwischen den Molekülen?",
+        question: "1. Welche beiden Bedingungen sind für die Ausbildung einer Wasserstoffbrücke zwischen zwei Molekülen nötig?",
         options: [
-          "H₂O bildet starke Wasserstoffbrücken · SO₂ bildet Dipol-Dipol-Wechselwirkungen",
-          "H₂O bildet nur schwache Dipol-Dipol-WW · SO₂ bildet Wasserstoffbrücken",
-          "Zwischen beiden Stoffen wirken überhaupt keine zwischenmolekularen Kräfte"
+          "Ein H-Atom (δ⁺) an F, O oder N UND ein freies Elektronenpaar an F, O oder N des Nachbarmoleküls",
+          "Zwei unpolare C–H-Bindungen und hohe Temperatur",
+          "Mindestens zwei Na⁺-Ionen im Ionengitter"
         ],
         correct: 0,
-        explanation: "H₂O besitzt stark polarisierte O–H-Bindungen und bildet starke Wasserstoffbrücken aus (Sdp. 100 °C). Gewinkeltes SO₂ ist ein permanenter Dipol und bildet Dipol-Dipol-Wechselwirkungen aus (Sdp. −10 °C)."
+        explanation: "Nur an die stark elektronegativen Atome F, O oder N gebundene H-Atome sind stark genug positiv teilgeladen (δ⁺), um mit einem freien Elektronenpaar (δ⁻) eine Wasserstoffbrücke zu bilden."
       },
       {
         id: "s3q2",
-        question: "2. Was wird beim Sieden von Wasser (100 °C) auf Teilchenebene überwunden?",
+        question: "2. Wie unterscheiden sich Dipol-Dipol-WW (z. B. bei SO₂) von Wasserstoffbrücken (z. B. bei H₂O)?",
         options: [
-          "Die Elektronenpaarbindungen zwischen O und H im Molekül",
-          "Die zwischenmolekularen Wasserstoffbrücken zwischen den H₂O-Molekülen",
-          "Die Atombindungen werden zu Ionen gespalten"
+          "H-Brücken sind eine besonders starke Sonderform zwischenmolekularer WW; reine Dipol-Dipol-WW sind mittelstark",
+          "Bei Dipol-Dipol-WW ziehen sich nur gleichnamige Teilladungen (δ⁺ und δ⁺) an",
+          "Dipol-Dipol-WW wirken nur zwischen unpolaren Alkan-Molekülen"
         ],
-        correct: 1,
-        explanation: "Beim Sieden bleiben die Moleküle selbst völlig intakt! Es werden nur die Anziehungskräfte zwischen den Molekülen überwunden."
+        correct: 0,
+        explanation: "Beide Kräfte entstehen zwischen entgegengesetzten Teilpolen (δ⁺ ··· δ⁻) permanenter Dipole, aber H-Brücken sind deutlich stärker."
       }
     ],
     step4: [
       {
         id: "s4q1",
-        question: "1. Wie ordnen sich Wassermoleküle in der Hydrat-Hülle um ein positives Na⁺-Ion an?",
+        question: "1. Wie entsteht zwischen zwei unpolaren Teilchen (z. B. Pentan-Molekülen) eine London-Wechselwirkung?",
         options: [
-          "Mit den positiven H-Polen (δ⁺) nach innen zum Na⁺-Ion",
-          "Mit dem negativen O-Pol (δ⁻) nach innen zum Na⁺-Ion",
-          "Völlig zufällig ohne feste Ausrichtung"
+          "Durch spontane Elektronenverschiebung bildet sich ein temporärer Dipol, der im Nachbarteilchen einen weiteren temporären Dipol induziert",
+          "Durch den Austausch von Protonen aus dem Atomkern",
+          "Unpolare Moleküle besitzen dauerhafte H-Brücken"
         ],
-        correct: 1,
-        explanation: "Ungleiche Ladungen ziehen sich an: Der negativ teilgeladene O-Pol (δ⁻) richtet sich zum positiven Na⁺-Ion; um Cl⁻ zeigen die δ⁺-H-Pole nach innen."
+        correct: 0,
+        explanation: "Elektronen bewegen sich ständig. Bei einer spontanen Verschiebung entsteht ein temporärer Dipol (δ⁺/δ⁻). Sein δ⁻-Pol schiebt Elektronen im Nachbarn weg (Induktion) → kurzzeitige Anziehung (London-WW)."
       },
       {
         id: "s4q2",
-        question: "2. Woran erkennst du einen hydrophilen Stoff auf Teilchenebene?",
+        question: "2. Wovon hängt die Stärke der London-Wechselwirkungen bei unpolaren Molekülen vor allem ab?",
         options: [
-          "Er besteht aus Teilchen mit polaren Bindungen („Dipol-Charakter“) oder Ionen",
-          "Er hat ausschließlich unpolare C–C- und C–H-Bindungen",
-          "Er besitzt überhaupt keine Elektronen"
+          "Von der Größe der Moleküloberfläche und der Anzahl der Elektronen",
+          "Ausschließlich vom Bindungswinkel im H₂O-Molekül",
+          "London-WW sind bei allen Molekülen unabhängig von der Größe exakt gleich stark"
         ],
         correct: 0,
-        explanation: "„Ähnliches löst sich in Ähnlichem“: Polare Moleküle bzw. Ionen wechselwirken stark mit den polaren H₂O-Dipolen und sind daher hydrophil."
+        explanation: "Je größer die Moleküloberfläche (z. B. längere C-Kette bei Alkanen) und je mehr Elektronen vorhanden sind, desto stärker werden die London-WW."
       }
     ],
     step5: [
       {
         id: "s5q1",
-        question: "Check 1 (EN-Trend): Welches Element hat die höchste Elektronegativität im PSE?",
+        question: "1. Vergleiche Methan (CH₄, −162 °C), Schwefeldioxid (SO₂, −10 °C) und Wasser (H₂O, +100 °C). Warum siedet H₂O am höchsten?",
+        options: [
+          "Zwischen H₂O-Molekülen wirken sehr starke Wasserstoffbrücken, bei SO₂ mittelstarke Dipol-Dipol-WW und bei kleinem CH₄ nur schwache London-WW",
+          "Weil beim Sieden von Wasser zuerst alle O–H-Atombindungen zerbrechen",
+          "Weil CH₄ stärkere H-Brücken als Wasser besitzt"
+        ],
+        correct: 0,
+        explanation: "Höhere WW erfordern mehr Wärmeenergie zum Trennen der Moleküle. Zudem brechen beim Sieden keine Atombindungen im Molekül!"
+      },
+      {
+        id: "s5q2",
+        question: "2. Warum ist Pentan (C₅H₁₂, Sdp. +36 °C) bei Raumtemperatur (20 °C) flüssig, während Methan (CH₄, −162 °C) gasförmig ist?",
+        options: [
+          "Pentan besitzt eine deutlich größere Moleküloberfläche und mehr Elektronen → die London-WW sind viel stärker als bei Methan",
+          "Pentan ist ein permanenter Dipol mit fünf O–H-Gruppen",
+          "Methan hat überhaupt keine Elektronen"
+        ],
+        correct: 0,
+        explanation: "Beide Alkane sind unpolar (nur London-WW). Wegen der größeren Kettenlänge/Oberfläche von Pentan sind die London-WW deutlich stärker → Sdp. steigt über 20 °C."
+      }
+    ],
+    step6: [
+      {
+        id: "s6q1",
+        question: "1. Wie richten sich H₂O-Moleküle in der Hydrat-Hülle um ein positives Na⁺-Ion aus?",
+        options: [
+          "Mit den positiven H-Polen (δ⁺) nach innen zum Na⁺-Ion",
+          "Mit dem negativen O-Pol (δ⁻) nach innen zum Na⁺-Ion",
+          "Völlig zufällig ohne feste Orientierung"
+        ],
+        correct: 1,
+        explanation: "Gegensätzliche Ladungen ziehen sich an: Der negative O-Pol (δ⁻) von Wasser zeigt zum positiven Na⁺-Ion, während H-Pole (δ⁺) zu Cl⁻ zeigen."
+      },
+      {
+        id: "s6q2",
+        question: "2. Warum mischt sich Pentan (C₅H₁₂) mit Heptan (C₇H₁₆), bildet aber mit Wasser (H₂O) zwei getrennte Phasen?",
+        options: [
+          "Zwischen unpolaren Alkanen wirken ähnliche London-WW (mischbar); H₂O-Dipole halten über starke H-Brücken zusammen und drängen Pentan ab",
+          "Pentan reagiert sofort zu Kochsalz und Gas",
+          "Heptan bildet Wasserstoffbrücken mit den C-Atomen von Pentan"
+        ],
+        correct: 0,
+        explanation: "„Ähnliches löst sich in Ähnlichem“: Unpolare Stoffe lösen sich über London-WW ineinander, trennen sich aber vom stark polaren H-Brücken-Netzwerk des Wassers."
+      }
+    ],
+    step7: [
+      {
+        id: "s7q1",
+        question: "Check 1 (EN-Trend Kl. 9): Welches Element hat die höchste Elektronegativität im PSE?",
         options: ["Francium (Fr)", "Kohlenstoff (C)", "Fluor (F)"],
         correct: 2,
         explanation: "Im PSE steigt die EN nach rechts oben: Fluor (EN = 4,0) besitzt die höchste, Francium (EN = 0,7) die niedrigste EN."
       },
       {
-        id: "s5q2",
-        question: "Check 2 (Symmetrie): Welches Molekül ist trotz polarer Bindungen KEIN permanenter Dipol?",
+        id: "s7q2",
+        question: "Check 2 (Symmetrie Kl. 9): Welches Molekül ist trotz polarer Bindungen KEIN permanenter Dipol?",
         options: ["H₂O (gewinkelt, 104,5°)", "CO₂ (linear, 180°)", "HCl (zweiatomig, ΔEN = 0,9)"],
         correct: 1,
-        explanation: "Bei linearem CO₂ heben sich beide entgegengesetzten Bindungspolaritäten auf: δ⁺- und δ⁻-Schwerpunkt fallen auf dem C-Atom zusammen."
+        explanation: "Bei linearem CO₂ fallen positiver (δ⁺) und negativer (δ⁻) Ladungsschwerpunkt auf dem C-Atom zusammen."
       },
       {
-        id: "s5q3",
-        question: "Check 3 (H-Brücken): Welche beiden Bedingungen braucht eine echte Wasserstoffbrücke?",
+        id: "s7q3",
+        question: "Check 3 (London-WW Kl. 10): Was bedeutet der Begriff „induzierter Dipol“?",
         options: [
-          "Ein H-Atom an F, O oder N (δ⁺) UND ein freies Elektronenpaar am Nachbarmolekül (δ⁻)",
-          "Zwei unpolare Chlor-Moleküle und eine Temperatur unter −40 °C",
-          "Ein Metall-Ion und ein Alkan-Molekül"
+          "Ein benachbarter temporärer Dipol verschiebt durch elektrostatische Abstoßung die Elektronen eines unpolaren Teilchens und erzeugt darin selbst einen Dipol",
+          "Ein festes Ionengitter gibt dauerhaft Elektronen ab",
+          "Ein Wasserstoffatom spaltet seine Elektronenpaarbindung"
         ],
         correct: 0,
-        explanation: "H-Brücken entstehen gerichtet zwischen einem stark positiv teilgeladenen H-Atom (an F, O oder N) und einem freien Elektronenpaar."
+        explanation: "Der δ⁻-Bereich des ersten temporären Dipols schiebt Elektronen im Nachbarteilchen zur abgewandten Seite → es entsteht ein induzierter temporärer Dipol."
       },
       {
-        id: "s5q4",
-        question: "Check 4 (WW & Siedetemperatur): Warum besitzt Wasser (H₂O) eine deutlich höhere Siedetemperatur (100 °C) als Schwefeldioxid (SO₂, −10 °C)?",
+        id: "s7q4",
+        question: "Check 4 (Oberfläche Kl. 10): Ordne die Alkane nach zunehmender Stärke ihrer London-WW!",
         options: [
-          "Wasserstoffbrücken zwischen H₂O-Molekülen sind deutlich stärker als reine Dipol-Dipol-Kräfte zwischen SO₂-Molekülen",
-          "SO₂ ist ein unpolares Molekül ohne Dipolmoment",
-          "In flüssigem Wasser spalten sich beim Sieden die Atombindungen"
+          "Methan (CH₄) < Pentan (C₅H₁₂) < Octan (C₈H₁₈)",
+          "Octan (C₈H₁₈) < Pentan (C₅H₁₂) < Methan (CH₄)",
+          "Pentan (C₅H₁₂) < Methan (CH₄) < Octan (C₈H₁₈)"
         ],
         correct: 0,
-        explanation: "Wasserstoffbrücken gehören zu den stärksten zwischenmolekularen Wechselwirkungen und erfordern viel mehr Wärmeenergie zum Überwinden als reine Dipol-Dipol-Kräfte."
+        explanation: "Mit steigender C-Kettenlänge nehmen Elektronenzahl und Moleküloberfläche zu → die London-WW steigen kontinuierlich von CH₄ zu C₈H₁₈."
       },
       {
-        id: "s5q5",
-        question: "Check 5 (Hydratation): Was hält Ionen in wässriger Kochsalzlösung voneinander getrennt?",
+        id: "s7q5",
+        question: "Check 5 (Siedepunkt-Vergleich): Was wird beim Sieden einer Molekülsubstanz (z. B. Wasser oder Pentan) überwunden?",
         options: [
-          "Eine gerichtete Hydrat-Hülle aus H₂O-Dipolen um jedes Na⁺- und Cl⁻-Ion",
-          "Repulsive Abstoßungskräfte der Wassermoleküle",
-          "Eine kovalente Bindung zwischen Na⁺ und Cl⁻"
-        ],
-        correct: 0,
-        explanation: "Die Wasser-Dipole bilden eine energetisch günstige Hydrat-Hülle (Oδ⁻ zu Na⁺; Hδ⁺ zu Cl⁻) und halten die Ionen in Lösung."
-      },
-      {
-        id: "s5q6",
-        question: "Check 6 (Ausblick Klasse 10): Warum siedet Ethanol (CH₃–CH₂–OH, +78 °C) viel höher als Ethan (C₂H₆, −89 °C)?",
-        options: [
-          "Ethan ist ein Ionengitter",
-          "Ethanol besitzt eine polare O–H-Gruppe und bildet starke H-Brücken, während unpolares Ethan keine H-Brücken bilden kann",
-          "Ethanol hat überhaupt keine zwischenmolekularen Kräfte"
+          "Die Elektronenpaarbindungen innerhalb der einzelnen Moleküle",
+          "Ausschließlich die zwischenmolekularen Wechselwirkungen zwischen den Molekülen",
+          "Die Protonen im Atomkern werden getrennt"
         ],
         correct: 1,
-        explanation: "Genau das brauchst du in Klasse 10: Die polare O–H-Gruppe ermöglicht H-Brücken (hoher Sdp., hydrophil), während Ethan unpolar bleibt!"
+        explanation: "Beim Verdampfen/Sieden bleiben alle Moleküle intakt – es müssen nur die zwischenmolekularen Kräfte überwunden werden."
+      },
+      {
+        id: "s7q6",
+        question: "Check 6 (Löslichkeit): Warum sinkt die Wasserlöslichkeit von Alkoholen (z. B. Methanol vs. Octanol) bei sehr langer Kohlenstoffkette?",
+        options: [
+          "Der lange unpolare Alkylrest (hydrophob, London-WW) überwiegt irgendwann gegenüber der polaren O–H-Gruppe",
+          "Octanol verliert seine Elektronen bei Raumtemperatur",
+          "Methanol hat keine O–H-Gruppe"
+        ],
+        correct: 0,
+        explanation: "Kurze Alkohole sind durch H-Brücken an der O–H-Gruppe hydrophil. Bei langen Ketten dominiert der unpolare Teil (wie bei einem Alkan) → schlecht wasserlöslich!"
       }
     ]
   };
@@ -211,7 +259,22 @@
   /* ------------------------------------------------------------------------
      2. ZUSTAND & PERSISTENZ
      ------------------------------------------------------------------------ */
+  const PATH_STEPS = {
+    all: ["step1", "step2", "step3", "step4", "step5", "step6", "step7"],
+    review9: ["step1", "step2", "step3"],
+    london10: ["step4"],
+    effects: ["step5", "step6"]
+  };
+
+  const PATH_DEFAULT_STEP = {
+    all: "step1",
+    review9: "step1",
+    london10: "step4",
+    effects: "step5"
+  };
+
   const state = {
+    learningPath: "all",
     activeStep: "step1",
     answers: {}, // { questionId: selectedIndex }
     m1: {
@@ -236,18 +299,28 @@
       mol2y: 125,
       mol2Rot: 0,
       showFormal: true,
-      tempC: 20,
       dragging: false,
       dragOffsetX: 0,
-      dragOffsetY: 0,
-      particles: []
+      dragOffsetY: 0
     },
     m4: {
+      phase: 0,
+      shiftPct: 0,
+      fluctuateOn: false,
+      fluctuatePhase: 0,
+      alkane: "c5",
+      transferText: ""
+    },
+    m5: {
+      tempC: 20,
+      selectedAlkane: "c5",
+      particles: []
+    },
+    m6: {
       mode: "builder",
       phase: 0,
       mix: "nacl",
       // 8 H2O dipoles: 0..3 around Na+ (ideal angle points O inward), 4..7 around Cl- (ideal angle points H inward)
-      // Angles in degrees: 0 = pointing right, 90 = down, 180 = left, 270 = up (orientation of O -> H-midpoint vector)
       builderAngles: [0, 90, 90, 180, 180, 270, 0, 90]
     }
   };
@@ -260,8 +333,14 @@
         if (parsed && typeof parsed.answers === "object") {
           state.answers = parsed.answers;
         }
+        if (parsed && typeof parsed.learningPath === "string" && Object.hasOwn(PATH_STEPS, parsed.learningPath)) {
+          state.learningPath = parsed.learningPath;
+        }
         if (parsed && typeof parsed.activeStep === "string" && document.getElementById(`panel-${parsed.activeStep}`)) {
           state.activeStep = parsed.activeStep;
+        }
+        if (parsed && typeof parsed.m4TransferText === "string") {
+          state.m4.transferText = parsed.m4TransferText;
         }
       }
     } catch (e) {}
@@ -270,8 +349,10 @@
   function saveProgress() {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify({
+        learningPath: state.learningPath,
         activeStep: state.activeStep,
-        answers: state.answers
+        answers: state.answers,
+        m4TransferText: state.m4.transferText
       }));
     } catch (e) {}
   }
@@ -321,8 +402,11 @@
     canvasModel1: { w: 660, h: 270 },
     canvasModel2: { w: 660, h: 310 },
     canvasModel3Lupe: { w: 660, h: 250 },
-    canvasModel3Boil: { w: 660, h: 190 },
-    canvasModel4: { w: 660, h: 310 }
+    canvasModel4London: { w: 660, h: 270 },
+    canvasModel4Alkane: { w: 660, h: 220 },
+    canvasModel5Boil: { w: 660, h: 210 },
+    canvasModel5AlkaneChart: { w: 660, h: 220 },
+    canvasModel6: { w: 660, h: 310 }
   };
 
   function setupHiDPICanvas(canvas) {
@@ -403,8 +487,27 @@
     const tablist = document.getElementById("stepsTablist");
     const tabs = Array.from(tablist.querySelectorAll('[role="tab"]'));
     const panels = Array.from(document.querySelectorAll('[role="tabpanel"]'));
+    const pathButtons = Array.from(document.querySelectorAll("[data-path-select]"));
+
+    function applyLearningPathUI(pathId) {
+      state.learningPath = Object.hasOwn(PATH_STEPS, pathId) ? pathId : "all";
+      const allowed = PATH_STEPS[state.learningPath];
+
+      pathButtons.forEach((btn) => {
+        const isCurrent = btn.dataset.pathSelect === state.learningPath;
+        btn.classList.toggle("active", isCurrent);
+        btn.setAttribute("aria-pressed", String(isCurrent));
+      });
+
+      tabs.forEach((tab) => {
+        const inPath = state.learningPath === "all" || allowed.includes(tab.dataset.step);
+        tab.classList.toggle("in-active-path", state.learningPath !== "all" && inPath);
+        tab.classList.toggle("out-of-path", state.learningPath !== "all" && !inPath);
+      });
+    }
 
     function selectStep(stepId, moveFocus = false) {
+      if (!document.getElementById(`panel-${stepId}`)) stepId = "step1";
       state.activeStep = stepId;
       saveProgress();
 
@@ -431,7 +534,26 @@
       }
 
       redrawAllCanvases();
+      try {
+        if (window.location.hash !== `#${stepId}`) {
+          history.replaceState(null, "", `#${stepId}`);
+        }
+      } catch (_) {}
     }
+
+    function selectLearningPath(pathId, jumpToDefault = true) {
+      applyLearningPathUI(pathId);
+      if (jumpToDefault) {
+        const targetStep = PATH_DEFAULT_STEP[state.learningPath] || "step1";
+        selectStep(targetStep, false);
+      } else {
+        saveProgress();
+      }
+    }
+
+    pathButtons.forEach((btn) => {
+      btn.addEventListener("click", () => selectLearningPath(btn.dataset.pathSelect, true));
+    });
 
     tabs.forEach((tab) => {
       tab.addEventListener("click", () => selectStep(tab.dataset.step, false));
@@ -486,7 +608,26 @@
       scrollObs.observe(lastTab);
     }
 
-    selectStep(state.activeStep, false);
+    // Apply URL query ?path=... and hash #step... if provided
+    let urlPath = null;
+    try {
+      const sp = new URLSearchParams(window.location.search);
+      const qPath = sp.get("path");
+      if (qPath && Object.hasOwn(PATH_STEPS, qPath)) {
+        urlPath = qPath;
+      }
+    } catch (_) {}
+
+    const initialHash = window.location.hash ? window.location.hash.replace("#", "") : "";
+    const matchedTab = tabs.find((t) => t.dataset.step === initialHash);
+
+    if (urlPath) {
+      applyLearningPathUI(urlPath);
+      selectStep(matchedTab ? matchedTab.dataset.step : PATH_DEFAULT_STEP[urlPath], false);
+    } else {
+      applyLearningPathUI(state.learningPath);
+      selectStep(matchedTab ? matchedTab.dataset.step : state.activeStep, false);
+    }
   }
 
   /* ------------------------------------------------------------------------
@@ -1373,33 +1514,14 @@
   }
 
   /* ------------------------------------------------------------------------
-     7. MODELL 3: TEILCHEN-LUPE & SIEDE-SIMULATOR
+     7. MODELL 3: TEILCHEN-LUPE (PERMANENTE DIPOLE: H-BRÜCKEN & DIPOL-DIPOL-WW)
      ------------------------------------------------------------------------ */
-  const BOILING_SUBSTANCES = [
-    { id: "so2", name: "Schwefeldioxid (SO₂)", bp: -10, ww: "Dipol-Dipol", colorKey: "primary" },
-    { id: "h2o", name: "Wasser (H₂O)", bp: 100, ww: "H-Brücken", colorKey: "deltaMinus" }
-  ];
-
-  let m3RafId = null;
-
   function initModel3() {
     const subBtns = document.querySelectorAll("[data-m3-substance]");
     const rotSlider = document.getElementById("m3RotSlider");
     const snapBtn = document.getElementById("m3SnapBtn");
     const formalBtn = document.getElementById("m3FormalToggle");
-    const tempSlider = document.getElementById("m3TempSlider");
     const lupeCanvas = document.getElementById("canvasModel3Lupe");
-
-    // Seed boiling particles (8 particles per beaker)
-    state.m3.particles = BOILING_SUBSTANCES.map(() =>
-      Array.from({ length: 8 }, (_, i) => ({
-        x: 0.16 + (i % 4) * 0.22,
-        y: 0.63 + Math.floor(i / 4) * 0.16,
-        vx: (Math.random() - 0.5) * 0.014,
-        vy: (Math.random() - 0.5) * 0.014,
-        phase: Math.random() * Math.PI * 2
-      }))
-    );
 
     function setSubstance(sub) {
       state.m3.substance = sub;
@@ -1471,19 +1593,8 @@
       try { lupeCanvas.releasePointerCapture(e.pointerId); } catch (err) {}
     });
 
-    tempSlider.addEventListener("input", () => {
-      state.m3.tempC = parseInt(tempSlider.value, 10);
-      syncSliderVisual(tempSlider);
-      document.getElementById("m3TempVal").textContent = `${state.m3.tempC} °C`;
-      document.getElementById("m3TempBadge").textContent = `T = ${state.m3.tempC} °C`;
-      tempSlider.setAttribute("aria-valuetext", `${state.m3.tempC} Grad Celsius`);
-      drawModel3Boil();
-    });
-
     syncSliderVisual(rotSlider);
-    syncSliderVisual(tempSlider);
     setSubstance("h2o");
-    startBoilingAnimation();
   }
 
   function drawH2OMolecule(ctx, cx, cy, rotDeg, pal, labelSide = true) {
@@ -1984,6 +2095,21 @@
         }
       });
     });
+
+    // Support deep-linking via query parameters (e.g. ?m4mode=mix&m4mix=pentan)
+    try {
+      const sp = new URLSearchParams(window.location.search);
+      const qMode = sp.get("m4mode");
+      const qMix = sp.get("m4mix");
+      if (qMode && ["builder", "phases", "mix"].includes(qMode)) {
+        setMode(qMode);
+      }
+      if (qMix && ["nacl", "hcl", "pentan"].includes(qMix)) {
+        state.m4.mix = qMix;
+        mixBtns.forEach((x) => x.classList.toggle("active", x.dataset.m4Mix === qMix));
+        drawModel4();
+      }
+    } catch (_) {}
   }
 
   function drawDipoleWater(ctx, cx, cy, angleDeg, pal, scale = 1) {
@@ -2175,7 +2301,7 @@
     } else {
       // Mode 3: Hydrophil vs Hydrophob Beaker + Lupe
       const mix = state.m4.mix;
-      const isSoluble = mix !== "ch4";
+      const isSoluble = mix !== "pentan";
       badge.textContent = isSoluble ? "Löst sich (hydrophil)" : "Nicht mischbar (hydrophob)";
       badge.classList.add(isSoluble ? "ok" : "warn");
 
@@ -2196,14 +2322,29 @@
       ctx.fillStyle = pal.dark ? "rgba(56, 189, 248, 0.24)" : "rgba(56, 189, 248, 0.28)";
       ctx.fillRect(78, 95, 164, 165);
 
-      if (mix === "ch4") {
-        // Phase separation layer on top!
-        ctx.fillStyle = pal.dark ? "rgba(251, 191, 36, 0.40)" : "rgba(245, 158, 11, 0.45)";
-        ctx.fillRect(78, 66, 164, 29);
+      if (mix === "pentan") {
+        // Phase separation: liquid Pentan floats on water (ρ ≈ 0,63 g/cm³ < 1,00 g/cm³)
+        ctx.fillStyle = pal.dark ? "rgba(251, 191, 36, 0.45)" : "rgba(245, 158, 11, 0.45)";
+        ctx.fillRect(78, 66, 164, 42); // 42px liquid pentane upper layer
+
+        // Phase boundary line
+        ctx.strokeStyle = pal.dark ? "rgba(251, 191, 36, 0.85)" : "rgba(217, 119, 6, 0.85)";
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.moveTo(78, 108);
+        ctx.lineTo(242, 108);
+        ctx.stroke();
+
         ctx.fillStyle = pal.ink;
         ctx.font = `700 11px ${CANVAS_FONT}`;
-        ctx.fillText("Unpolare Phase / Gas", 160, 84);
-        ctx.fillText("Wasser (unten)", 160, 185);
+        ctx.fillText("Pentan-Phase (oben, unpolar)", 160, 83);
+        ctx.font = `500 10px ${CANVAS_FONT}`;
+        ctx.fillText("ρ ≈ 0,63 g/cm³", 160, 98);
+
+        ctx.font = `700 11px ${CANVAS_FONT}`;
+        ctx.fillText("Wasser-Phase (unten, polar)", 160, 180);
+        ctx.font = `500 10px ${CANVAS_FONT}`;
+        ctx.fillText("ρ = 1,00 g/cm³", 160, 195);
       } else {
         ctx.fillStyle = pal.ink;
         ctx.font = `700 12px ${CANVAS_FONT}`;
@@ -2244,24 +2385,79 @@
         drawDipoleWater(ctx, 540, 162, 180, pal, 0.85);
         caption.textContent = "HCl (polar, hydrophil) + Wasser: Ähnliches löst sich in Ähnlichem — polare Moleküle ziehen H₂O-Dipole an.";
       } else {
-        // Unpolar CH4 pushed out from H2O network
-        drawDipoleWater(ctx, 425, 195, 30, pal, 0.8);
-        drawDipoleWater(ctx, 495, 200, 150, pal, 0.8);
-        drawDipoleWater(ctx, 460, 160, 270, pal, 0.8);
+        // Unpolar Pentan pushed out from H2O network
+        // Water network below with hydrogen bonds
+        drawDipoleWater(ctx, 415, 202, 30, pal, 0.8);
+        drawDipoleWater(ctx, 465, 218, 270, pal, 0.8);
+        drawDipoleWater(ctx, 515, 202, 150, pal, 0.8);
+        drawDipoleWater(ctx, 440, 168, 0, pal, 0.8);
+        drawDipoleWater(ctx, 490, 168, 180, pal, 0.8);
+
+        // H-bonds (dashed lines)
         ctx.strokeStyle = pal.deltaMinus;
-        ctx.setLineDash([3, 3]);
+        ctx.lineWidth = 2;
+        ctx.setLineDash([4, 3]);
         ctx.beginPath();
-        ctx.moveTo(425, 195); ctx.lineTo(460, 160); ctx.lineTo(495, 200);
+        ctx.moveTo(415, 202); ctx.lineTo(440, 168); ctx.lineTo(490, 168); ctx.lineTo(515, 202);
+        ctx.moveTo(440, 168); ctx.lineTo(465, 218); ctx.moveTo(490, 168); ctx.lineTo(465, 218);
         ctx.stroke();
         ctx.setLineDash([]);
 
-        // Unpolar CH4 sphere
-        ctx.fillStyle = pal.warn;
-        ctx.beginPath(); ctx.arc(465, 92, 20, 0, Math.PI * 2); ctx.fill();
-        ctx.fillStyle = "#ffffff";
-        ctx.font = `800 12px ${CANVAS_FONT}`;
-        ctx.fillText("CH₄", 465, 96);
-        caption.textContent = "Methan / Öl (unpolar, hydrophob): Die H₂O-Dipole ziehen sich über H-Brücken gegenseitig an und drängen unpolare Teilchen heraus.";
+        ctx.fillStyle = pal.primary;
+        ctx.font = `600 10px ${CANVAS_FONT}`;
+        ctx.textAlign = "center";
+        ctx.fillText("H₂O-Netzwerk (H-Brücken)", 465, 248);
+
+        // Pentan label
+        ctx.fillStyle = pal.ink;
+        ctx.font = `700 10.5px ${CANVAS_FONT}`;
+        ctx.textAlign = "center";
+        ctx.fillText("Pentan (C₅H₁₂, unpolar)", 465, 65);
+
+        // Pentan molecule (C5H12) at the top:
+        // Soft rounded unpolar envelope
+        ctx.fillStyle = pal.dark ? "rgba(251, 191, 36, 0.22)" : "rgba(245, 158, 11, 0.22)";
+        ctx.strokeStyle = pal.dark ? "rgba(251, 191, 36, 0.55)" : "rgba(217, 119, 6, 0.45)";
+        ctx.lineWidth = 1.5;
+        drawRoundedRect(ctx, 404, 73, 122, 42, 14);
+        ctx.fill();
+        ctx.stroke();
+
+        // 5 Carbon atoms in zigzag chain
+        const cCoords = [
+          { x: 418, y: 100 },
+          { x: 441, y: 86 },
+          { x: 465, y: 100 },
+          { x: 489, y: 86 },
+          { x: 512, y: 100 }
+        ];
+
+        // Carbon-Carbon backbone
+        ctx.strokeStyle = pal.ink;
+        ctx.lineWidth = 2.6;
+        ctx.beginPath();
+        cCoords.forEach((pt, i) => {
+          if (i === 0) ctx.moveTo(pt.x, pt.y);
+          else ctx.lineTo(pt.x, pt.y);
+        });
+        ctx.stroke();
+
+        // C atom circles
+        cCoords.forEach((pt) => {
+          ctx.beginPath();
+          ctx.arc(pt.x, pt.y, 9, 0, Math.PI * 2);
+          ctx.fillStyle = pal.dark ? "#d97706" : "#f59e0b";
+          ctx.fill();
+          ctx.strokeStyle = "#ffffff";
+          ctx.lineWidth = 1.5;
+          ctx.stroke();
+          ctx.fillStyle = "#ffffff";
+          ctx.font = `800 9.5px ${CANVAS_FONT}`;
+          ctx.textAlign = "center";
+          ctx.fillText("C", pt.x, pt.y + 3.2);
+        });
+
+        caption.textContent = "Pentan (C₅H₁₂, unpolar): Die H₂O-Dipole ziehen sich über starke H-Brücken zusammen und drängen unpolare Pentan-Moleküle heraus → flüssiges Pentan schwimmt als obere Phase auf Wasser (Phasentrennung).";
       }
     }
   }
@@ -2408,6 +2604,21 @@
     drawModel2();
     drawModel3Lupe();
     drawModel3Boil();
+    // Support deep-linking via query parameters (e.g. ?m4mode=mix&m4mix=pentan)
+    try {
+      const sp = new URLSearchParams(window.location.search);
+      const qMode = sp.get("m4mode");
+      const qMix = sp.get("m4mix");
+      if (qMode && ["builder", "phases", "mix"].includes(qMode)) {
+        setMode(qMode);
+      }
+      if (qMix && ["nacl", "hcl", "pentan"].includes(qMix)) {
+        state.m4.mix = qMix;
+        mixBtns.forEach((x) => x.classList.toggle("active", x.dataset.m4Mix === qMix));
+        drawModel4();
+      }
+    } catch (_) {}
+
     drawModel4();
   }
 

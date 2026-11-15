@@ -21,7 +21,7 @@ Jeder Teilschritt kombiniert auf einer Ansicht:
    *Modell 3a („Teilchen-Lupe“):* Zieh- und drehbares Nachbarmolekül mit Live-Anziehungskraft-Anzeige (`H-Brücken` bei `H₂O`, `Dipol-Dipol-WW` bei `SO₂` inkl. optionaler Formalladungen `⊕/⊖`).  
    *Modell 3b („Siede-Simulator“):* Temperatur-Slider (`-60 °C` bis `+120 °C`) mit zwei parallelen Teilchen-Bechergläsern im direkten Vergleich.
 4. **Lösungsverhalten & Hydrat-Hülle (`NaCl` in Wasser):**  
-   *Modell 4:* Interaktiver Hydrat-Hüllen-Baukasten (8 drehbare `H₂O`-Dipole um `Na⁺` und `Cl⁻`), 3-Phasen-Auflösung des Ionengitters und „Ähnliches löst sich in Ähnlichem“-Vergleich (`hydrophil` vs. `hydrophob`).
+   *Modell 4:* Interaktiver Hydrat-Hüllen-Baukasten (8 drehbare `H₂O`-Dipole um `Na⁺` und `Cl⁻`), 3-Phasen-Auflösung des Ionengitters und „Ähnliches löst sich in Ähnlichem“-Vergleich (`hydrophil` vs. `hydrophob` mit NaCl, HCl und flüssigem Pentan C₅H₁₂ als Zweiphasensystem).
 5. **Gesamt-Check & Spickzettel:**  
    6 Diagnose-Aufgaben quer durch alle Konzepte inkl. Transfer zur Organischen Chemie (Klasse 10) und druckbarem A4-Kompakt-Spickzettel.
 

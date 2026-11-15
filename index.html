@@ -13,8 +13,8 @@
       }
     } catch (e) {}
   </script>
-  <title>Zwischenmolekulare Wechselwirkungen (Vorwissen 9 → 10) | Schule Birklehof</title>
-  <meta name="description" content="Interaktive Auffrischung für Klasse 10 zu Elektronegativität, Polarität, Symmetrie, Dipol-Dipol-Wechselwirkungen, Wasserstoffbrücken und Lösungsverhalten.">
+  <title>Zwischenmolekulare Wechselwirkungen (Klasse 9 → 10) | Schule Birklehof</title>
+  <meta name="description" content="Interaktives Lernportal für Klasse 10: Wiederholung zu Polarität, Symmetrie, Dipol-Dipol-WW und H-Brücken sowie Erarbeitung temporärer Dipole (London-WW) und deren Auswirkungen.">
   <link rel="stylesheet" href="style.css">
   <script src="app.js" defer></script>
 </head>
@@ -25,12 +25,12 @@
   <header class="print-only-header">
     <div class="print-header-top">
       <div>
-        <p class="print-kicker">Schule Birklehof · Chemie Klasse 10 · Vorwissen Klasse 9</p>
-        <h2 class="print-title">Kompakt-Übersicht: Polarität, Dipole &amp; zwischenmolekulare Wechselwirkungen</h2>
+        <p class="print-kicker">Schule Birklehof · Chemie Klasse 10 · Vorwissen Klasse 9 &amp; London-WW</p>
+        <h2 class="print-title">Kompakt-Übersicht: Zwischenmolekulare Wechselwirkungen &amp; Stoffeigenschaften</h2>
       </div>
       <div class="print-meta">
         <span>Stand: <strong id="printDate">--.--.----</strong></span>
-        <span>Checks gelöst: <strong id="printScore">0 / 14</strong></span>
+        <span>Checks gelöst: <strong id="printScore">0 / 18</strong></span>
       </div>
     </div>
   </header>
@@ -40,19 +40,19 @@
     <div class="header-inner">
       <img src="assets/mint_logo.png" alt="Logo MINT-freundliche Schule" class="logo-mint" width="118" height="30" fetchpriority="high">
       <div class="header-title">
-        <p class="kicker">Schule Birklehof · Chemie Klasse 10 · Vorwissen-Check Klasse 9</p>
+        <p class="kicker">Schule Birklehof · Chemie Klasse 10 · Modul Zwischenmolekulare Kräfte</p>
         <h1 id="main-heading" tabindex="-1">Zwischenmolekulare Wechselwirkungen</h1>
-        <p class="subtitle">Polare Bindung · Symmetrie &amp; Dipole · Dipol-Dipol-WW &amp; H-Brücken · Lösungsverhalten</p>
+        <p class="subtitle">Grundlagen (Kl. 9) · Temporäre Dipole &amp; London-WW (Kl. 10) · Siedetemperaturen &amp; Löslichkeit</p>
       </div>
       <div class="header-right">
         <div class="header-actions">
           <div class="progress-pill" aria-live="polite">
-            <span id="globalProgressText">0 / 14 Checks</span>
-            <progress id="globalProgressBar" max="14" value="0" aria-label="Gelöste Verständnis-Checks"></progress>
+            <span id="globalProgressText">0 / 18 Checks</span>
+            <progress id="globalProgressBar" max="18" value="0" aria-label="Gelöste Verständnis-Checks"></progress>
           </div>
           <button type="button" class="btn btn-ghost btn-sm" id="themeToggleBtn" aria-label="Farbschema wechseln (Hell, Dunkel oder System)">
             <span id="themeToggleIcon" aria-hidden="true">🌓</span>
-            <span id="themeToggleLabel">Design</span>
+            <span id="themeToggleLabel">System</span>
           </button>
           <button type="button" class="btn btn-secondary btn-sm" id="printSummaryBtn">
             <span aria-hidden="true">🖨️</span> Spickzettel
@@ -65,38 +65,81 @@
       </div>
     </div>
 
-    <nav class="tabs-shell" aria-label="Teilschritte der Wiederholung">
-      <div class="tabs-scroller" id="stepsTablist" focusgroup="tablist nomemory" role="tablist" aria-label="5 Teilschritte">
-        <button type="button" role="tab" class="tab-btn" id="tab-step1" aria-selected="true" focusgroupstart data-step="step1">
+    <nav class="tabs-shell" aria-label="Teilschritte der Lerneinheit">
+      <div class="tabs-scroller" id="stepsTablist" focusgroup="tablist nomemory" role="tablist" aria-label="7 Teilschritte">
+        <button type="button" role="tab" class="tab-btn" id="tab-step1" aria-selected="true" focusgroupstart data-step="step1" data-path-group="review9">
           <span class="tab-num">1</span>
           <span>Polare Bindung &amp; EN</span>
           <span class="tab-badge" id="badge-step1">0/2</span>
         </button>
-        <button type="button" role="tab" class="tab-btn" id="tab-step2" aria-selected="false" data-step="step2">
+        <button type="button" role="tab" class="tab-btn" id="tab-step2" aria-selected="false" data-step="step2" data-path-group="review9">
           <span class="tab-num">2</span>
           <span>Symmetrie &amp; Dipole</span>
           <span class="tab-badge" id="badge-step2">0/2</span>
         </button>
-        <button type="button" role="tab" class="tab-btn" id="tab-step3" aria-selected="false" data-step="step3">
+        <button type="button" role="tab" class="tab-btn" id="tab-step3" aria-selected="false" data-step="step3" data-path-group="review9">
           <span class="tab-num">3</span>
           <span>Dipol-Dipol &amp; H-Brücken</span>
           <span class="tab-badge" id="badge-step3">0/2</span>
         </button>
-        <button type="button" role="tab" class="tab-btn" id="tab-step4" aria-selected="false" data-step="step4">
+        <button type="button" role="tab" class="tab-btn" id="tab-step4" aria-selected="false" data-step="step4" data-path-group="london10">
           <span class="tab-num">4</span>
-          <span>Lösungsverhalten</span>
+          <span>Temporäre Dipole &amp; London-WW</span>
           <span class="tab-badge" id="badge-step4">0/2</span>
         </button>
-        <button type="button" role="tab" class="tab-btn" id="tab-step5" aria-selected="false" data-step="step5">
+        <button type="button" role="tab" class="tab-btn" id="tab-step5" aria-selected="false" data-step="step5" data-path-group="effects">
           <span class="tab-num">5</span>
-          <span>Gesamt-Check &amp; Überblick</span>
-          <span class="tab-badge" id="badge-step5">0/6</span>
+          <span>Auswirkung: Siedetemperaturen</span>
+          <span class="tab-badge" id="badge-step5">0/2</span>
+        </button>
+        <button type="button" role="tab" class="tab-btn" id="tab-step6" aria-selected="false" data-step="step6" data-path-group="effects">
+          <span class="tab-num">6</span>
+          <span>Auswirkung: Löslichkeit</span>
+          <span class="tab-badge" id="badge-step6">0/2</span>
+        </button>
+        <button type="button" role="tab" class="tab-btn" id="tab-step7" aria-selected="false" data-step="step7" data-path-group="all">
+          <span class="tab-num">7</span>
+          <span>Gesamt-Check &amp; Spickzettel</span>
+          <span class="tab-badge" id="badge-step7">0/6</span>
         </button>
       </div>
     </nav>
   </header>
 
   <main id="main-content" class="main-container">
+    <!-- LERNPFAD-AUSWAHL ZU BEGINN -->
+    <section class="path-hub no-print" id="learningPathHub" aria-labelledby="pathHubHeading">
+      <div class="path-hub-top">
+        <div>
+          <span class="path-hub-kicker">Dein Lernziel wählen</span>
+          <h2 id="pathHubHeading">Was möchtest du heute bearbeiten?</h2>
+        </div>
+        <button type="button" class="chip-btn active" id="pathAllBtn" data-path-select="all" aria-pressed="true">
+          Alle 7 Schritte anzeigen
+        </button>
+      </div>
+      <div class="path-grid" role="group" aria-label="Lernpfad wählen">
+        <button type="button" class="path-card" data-path-select="review9" aria-pressed="false">
+          <span class="path-pill">Kl. 9 · Wiederholung</span>
+          <strong class="path-card-title">1. Grundlagen &amp; WW aus Klasse 9</strong>
+          <span class="path-card-desc">Polare Bindungen, räumliche Symmetrie, Dipol-Dipol-WW und Wasserstoffbrücken auffrischen.</span>
+          <span class="path-card-steps">Schritte 1 – 3 →</span>
+        </button>
+        <button type="button" class="path-card" data-path-select="london10" aria-pressed="false">
+          <span class="path-pill path-pill-teal">Kl. 10 · Neu erarbeiten</span>
+          <strong class="path-card-title">2. Temporäre Dipole &amp; London-WW</strong>
+          <span class="path-card-desc">Entstehung temporärer &amp; induzierter Dipole verstehen und den Einfluss der Moleküloberfläche erarbeiten.</span>
+          <span class="path-card-steps">Schritt 4 →</span>
+        </button>
+        <button type="button" class="path-card" data-path-select="effects" aria-pressed="false">
+          <span class="path-pill path-pill-warn">Anwendung · Stoffeigenschaften</span>
+          <strong class="path-card-title">3. Auswirkungen der WW erarbeiten</strong>
+          <span class="path-card-desc">Siedetemperaturen (Alkane vs. Dipole), Hydrat-Hülle und Löslichkeitsverhalten vergleichen.</span>
+          <span class="path-card-steps">Schritte 5 – 6 →</span>
+        </button>
+      </div>
+    </section>
+
     <div class="tab-panels-stack">
 
       <!-- =================================================================
@@ -105,11 +148,10 @@
       <section role="tabpanel" class="step-panel" id="panel-step1" aria-labelledby="tab-step1" data-step="step1">
         <div class="panel-inner">
           <div class="split-layout">
-            <!-- Linke Spalte: Kompakter Informationstext -->
             <div class="info-column">
               <div class="level-badges">
                 <span class="level-badge particle"><span aria-hidden="true">🔍</span> Teilchenebene</span>
-                <span class="step-tag">Teilschritt 1 von 5</span>
+                <span class="step-tag">Wiederholung Kl. 9 · Schritt 1 von 7</span>
               </div>
               <h2>Elektronegativität (EN) &amp; polare Bindung</h2>
 
@@ -136,7 +178,7 @@
                       <td><span class="pill pill-neutral">unpolar</span></td>
                     </tr>
                     <tr>
-                      <td>CH₄ (C–H)</td>
+                      <td>CH₄ / Pentan (C–H)</td>
                       <td>0,4</td>
                       <td><span class="pill pill-neutral">unpolar</span></td>
                     </tr>
@@ -162,13 +204,12 @@
               <div class="try-box no-print">
                 <h3><span aria-hidden="true">🧪</span> Probier im Modell aus</h3>
                 <ol>
-                  <li>Wähle <strong>H–Cl</strong> und vergleiche die Elektronenwolke mit <strong>H–H</strong>.</li>
+                  <li>Wähle <strong>H–Cl</strong> und vergleiche die Elektronenwolke mit <strong>H–H</strong> und <strong>C–H</strong>.</li>
                   <li>Klicke im Mini-PSE links und rechts auf Elemente, um den Schwellenwert <strong>ΔEN = 0,5</strong> zu testen.</li>
                 </ol>
               </div>
             </div>
 
-            <!-- Rechte Spalte: Interaktives Modell 1 -->
             <div class="model-column">
               <div class="model-card">
                 <div class="model-header">
@@ -186,13 +227,12 @@
                 </div>
 
                 <figure class="canvas-figure">
-                  <canvas id="canvasModel1" width="660" height="270" role="img" aria-label="Interaktives Modell einer Elektronenpaarbindung mit verschiebbarer Elektronenwolke und Partialladungen"></canvas>
+                  <canvas id="canvasModel1" width="660" height="270" role="img" aria-label="Interaktives Modell einer Elektronenpaarbindung mit Elektronenwolke und Partialladungen"></canvas>
                   <figcaption class="model-caption" id="m1Caption">
                     Cl (EN = 3,0) zieht die bindenden Elektronen deutlich stärker an als H (EN = 2,1) → δ⁺ am H, δ⁻ am Cl.
                   </figcaption>
                 </figure>
 
-                <!-- Mini-PSE Kompass (aus 10B_Chemie.pdf) -->
                 <div class="pse-compass">
                   <div class="pse-compass-head">
                     <span><strong>Mini-PSE:</strong> Klicke ein Element zur Auswahl für Atom</span>
@@ -202,9 +242,7 @@
                     </div>
                   </div>
                   <div class="pse-layout">
-                    <div class="pse-grid" id="m1PseGrid" role="group" aria-label="Ausgewählte Elemente mit EN-Werten">
-                      <!-- Per JS gefüllt -->
-                    </div>
+                    <div class="pse-grid" id="m1PseGrid" role="group" aria-label="Ausgewählte Elemente mit EN-Werten"></div>
                     <div class="pse-trend-diagram" aria-hidden="true">
                       <div class="trend-box">
                         <span class="trend-horiz">EN steigt →</span>
@@ -218,7 +256,6 @@
             </div>
           </div>
 
-          <!-- Mini-Check Teilschritt 1 -->
           <div class="minicheck-strip no-print">
             <div class="minicheck-head">
               <h3><span aria-hidden="true">✓</span> Mini-Check zu Teilschritt 1</h3>
@@ -235,24 +272,23 @@
       <section role="tabpanel" class="step-panel" id="panel-step2" aria-labelledby="tab-step2" data-step="step2" hidden="until-found">
         <div class="panel-inner">
           <div class="split-layout">
-            <!-- Linke Spalte: Kompakter Informationstext -->
             <div class="info-column">
               <div class="level-badges">
                 <span class="level-badge particle"><span aria-hidden="true">🔍</span> Teilchenebene</span>
                 <span class="level-badge macro"><span aria-hidden="true">👁️</span> Stoffebene</span>
-                <span class="step-tag">Teilschritt 2 von 5</span>
+                <span class="step-tag">Wiederholung Kl. 9 · Schritt 2 von 7</span>
               </div>
               <h2>Spezialfall: Symmetrische Moleküle</h2>
 
               <ul class="concise-list">
-                <li><strong>Polare Bindung ≠ automatisch Dipol:</strong> Entscheidend ist zusätzlich der <strong>räumliche Bau</strong> (die Symmetrie).</li>
-                <li><strong>Beispiel CO₂ (O=C=O, 180°):</strong> Beide O-Atome (δ⁻) ziehen die e⁻ gleich stark in entgegengesetzte Richtungen. Die <strong>Schwerpunkte von δ⁺ und δ⁻ fallen gemeinsam auf das C-Atom</strong> → das Molekül „verliert“ den Dipol-Charakter.</li>
-                <li><strong>Beispiel CH₄ (Tetraeder):</strong> Punktsymmetrisch im C-Atom (und ΔEN = 0,4) → kein Dipol → <strong>unpolarer Stoff</strong> (hydrophob, niedrige Siedetemperatur).</li>
+                <li><strong>Polare Bindung ≠ automatisch permanenter Dipol:</strong> Entscheidend ist zusätzlich der <strong>räumliche Bau</strong> (die Symmetrie).</li>
+                <li><strong>Beispiel CO₂ (O=C=O, 180°):</strong> Beide O-Atome (δ⁻) ziehen die e⁻ gleich stark in entgegengesetzte Richtungen. Die <strong>Schwerpunkte von δ⁺ und δ⁻ fallen gemeinsam auf das C-Atom</strong> → kein permanenter Dipol.</li>
+                <li><strong>Beispiel CH₄ (Tetraeder):</strong> Punktsymmetrisch im C-Atom (und ΔEN = 0,4) → <strong>unpolarer Stoff</strong> (kein permanenter Dipol).</li>
                 <li><strong>Gegenbeispiel H₂O (gewinkelt, 104,5°):</strong> Die Schwerpunkte von δ⁺ und δ⁻ sind getrennt → <strong>permanenter Dipol</strong>.</li>
               </ul>
 
               <div class="merksatz-compact">
-                <strong>Merke:</strong> Fallen positiver (δ⁺) und negativer (δ⁻) Ladungsschwerpunkt aufeinander, ist das Molekül nach außen <strong>kein Dipol</strong>.
+                <strong>Merke:</strong> Fallen positiver (δ⁺) und negativer (δ⁻) Ladungsschwerpunkt aufeinander, ist das Molekül nach außen <strong>kein permanenter Dipol</strong>.
               </div>
 
               <div class="try-box no-print">
@@ -264,7 +300,6 @@
               </div>
             </div>
 
-            <!-- Rechte Spalte: Interaktives Modell 2 -->
             <div class="model-column">
               <div class="model-card">
                 <div class="model-header">
@@ -280,7 +315,7 @@
                 </div>
 
                 <figure class="canvas-figure">
-                  <canvas id="canvasModel2" width="660" height="310" role="img" aria-label="Interaktives Molekülmodell mit Spiegelachse, Ladungsschwerpunkten und optionalem elektrischem Feld"></canvas>
+                  <canvas id="canvasModel2" width="660" height="310" role="img" aria-label="Interaktives Molekülmodell mit Spiegelachse, Ladungsschwerpunkten und elektrischem Feld"></canvas>
                   <figcaption class="model-caption" id="m2Caption">
                     CO₂ (180°): Beide C=O-Bindungen sind polar (ΔEN = 1,0), aber die Schwerpunkte von δ⁺ und δ⁻ liegen gemeinsam auf dem C-Atom.
                   </figcaption>
@@ -307,7 +342,6 @@
             </div>
           </div>
 
-          <!-- Mini-Check Teilschritt 2 -->
           <div class="minicheck-strip no-print">
             <div class="minicheck-head">
               <h3><span aria-hidden="true">✓</span> Mini-Check zu Teilschritt 2</h3>
@@ -319,44 +353,46 @@
       </section>
 
       <!-- =================================================================
-           TEILSCHRITT 3: ZWISCHENMOLEKULARE WECHSELWIRKUNGEN & SIEDETEMPERATUR
+           TEILSCHRITT 3: DIPOL-DIPOL-WW & WASSERSTOFFBRÜCKEN (KLASSE 9)
            ================================================================= -->
       <section role="tabpanel" class="step-panel" id="panel-step3" aria-labelledby="tab-step3" data-step="step3" hidden="until-found">
         <div class="panel-inner">
           <div class="split-layout">
-            <!-- Linke Spalte: Kompakter Informationstext -->
             <div class="info-column">
               <div class="level-badges">
-                <span class="level-badge macro"><span aria-hidden="true">👁️</span> Stoffebene</span>
                 <span class="level-badge particle"><span aria-hidden="true">🔍</span> Teilchenebene</span>
-                <span class="step-tag">Teilschritt 3 von 5</span>
+                <span class="step-tag">Wiederholung Kl. 9 · Schritt 3 von 7</span>
               </div>
-              <h2>Zwischenmolekulare Wechselwirkungen &amp; Sieden</h2>
+              <h2>Dipol-Dipol-WW &amp; Wasserstoffbrücken</h2>
 
               <ul class="concise-list">
-                <li><strong>Stoffebene:</strong> Siedetemperatur, Schmelztemperatur und Viskosität zeigen, wie stark sich Moleküle <em>untereinander</em> anziehen. Beim Sieden brechen <strong>keine</strong> Atombindungen im Molekül!</li>
-                <li><strong>1. Dipol-Dipol-WW (z. B. SO₂, Sdp. −10 °C):</strong> Mittelstark. Permanente Dipole ziehen sich elektrostatisch über die gegensätzlichen Teilpole (δ⁺ ··· δ⁻) an.</li>
-                <li><strong>2. Wasserstoffbrücken (z. B. H₂O, Sdp. 100 °C):</strong> Besonders starke Sonderform. Stark polarisiertes H-Atom (δ⁺ an F, O, N) tritt mit dem freien Elektronenpaar des Nachbarmoleküls in Wechselwirkung.</li>
+                <li><strong>Voraussetzung:</strong> Beide Wechselwirkungen wirken zwischen <strong>permanenten Dipol-Molekülen</strong>. Gleichnamige Teilpole stoßen sich ab, gegensätzliche (δ⁺ und δ⁻) ziehen sich an.</li>
+                <li><strong>1. Dipol-Dipol-WW (z. B. SO₂, HCl):</strong> Mittelstarke elektrostatische Anziehung zwischen dem δ⁺-Bereich des einen und dem δ⁻-Bereich des Nachbarmoleküls.</li>
+                <li><strong>2. Wasserstoffbrücken (z. B. H₂O, NH₃, HF):</strong> Besonders starke, gerichtete Sonderform der Dipol-Dipol-WW. Bedingungen:
+                  <ul class="sub-list">
+                    <li>Ein stark positiv polarisiertes <strong>H-Atom (δ⁺)</strong> an F, O oder N.</li>
+                    <li>Ein <strong>freies Elektronenpaar</strong> am F-, O- oder N-Atom (δ⁻) des Nachbarmoleküls.</li>
+                  </ul>
+                </li>
               </ul>
 
               <div class="merksatz-compact">
-                <strong>Merke:</strong> Stärkere zwischenmolekulare WW → mehr Wärmeenergie zum Trennen nötig → <strong>höhere Siedetemperatur</strong>.
+                <strong>Merke (Kl. 9):</strong> Wasserstoffbrücken sind deutlich stärker als reine Dipol-Dipol-WW. Doch was hält eigentlich <em>unpolare</em> Moleküle (wie Pentan oder Iod) zusammen? Das erfährst du in Schritt 4!
               </div>
 
               <div class="try-box no-print">
                 <h3><span aria-hidden="true">🧪</span> Probier im Modell aus</h3>
                 <ol>
-                  <li>Wähle eine Lupe (<strong>H₂O</strong> oder <strong>SO₂</strong>) und ziehe/drehe das rechte Molekül nahe an das linke!</li>
-                  <li>Erhöhe die Temperatur im <strong>Siede-Simulator</strong> schrittweise von −50 °C auf +110 °C.</li>
+                  <li>Wähle <strong>H₂O (H-Brücken)</strong> oder <strong>SO₂ (Dipol-Dipol)</strong> in der Teilchen-Lupe.</li>
+                  <li>Ziehe das rechte Molekül mit Maus oder Finger an das linke heran und drehe es – beobachte Anziehung vs. Abstoßung!</li>
                 </ol>
               </div>
             </div>
 
-            <!-- Rechte Spalte: Interaktives Modell 3 -->
             <div class="model-column">
               <div class="model-card">
                 <div class="model-header">
-                  <h3>Modell 3a: Teilchen-Lupe (Anziehung &amp; Orientierung)</h3>
+                  <h3>Modell 3: Teilchen-Lupe (Permanente Dipole)</h3>
                   <span class="model-status" id="m3StrengthBadge">H-Brücke · sehr stark</span>
                 </div>
 
@@ -366,7 +402,7 @@
                 </div>
 
                 <figure class="canvas-figure">
-                  <canvas id="canvasModel3Lupe" width="660" height="250" role="img" aria-label="Interaktive Teilchenlupe mit beweglichem zweiten Molekül zur Erkundung der Wechselwirkung"></canvas>
+                  <canvas id="canvasModel3Lupe" width="660" height="250" role="img" aria-label="Interaktive Teilchenlupe mit beweglichem zweiten Molekül für H-Brücken und Dipol-Dipol-WW"></canvas>
                   <figcaption class="model-caption" id="m3LupeCaption">
                     Ziehe das rechte Molekül mit Maus/Finger oder drehe es: Ein δ⁺-H-Atom richtet sich direkt auf das freie Elektronenpaar von O (δ⁻).
                   </figcaption>
@@ -385,34 +421,14 @@
                     <button type="button" class="btn btn-ghost btn-sm" id="m3FormalToggle" aria-pressed="true" hidden>Formalladungen (⊕/⊖): An</button>
                   </div>
                 </div>
-
-                <hr class="model-divider">
-
-                <div class="model-header">
-                  <h3>Modell 3b: Siede-Simulator (Stoffebene ↔ Teilchenebene)</h3>
-                  <span class="temp-readout" id="m3TempBadge">T = 20 °C</span>
-                </div>
-
-                <div class="slider-group">
-                  <div class="slider-label-row">
-                    <label for="m3TempSlider">Heizplatte (Temperatur einstellen):</label>
-                    <output for="m3TempSlider" id="m3TempVal">20 °C</output>
-                  </div>
-                  <input type="range" id="m3TempSlider" min="-60" max="120" step="1" value="20">
-                </div>
-
-                <figure class="canvas-figure">
-                  <canvas id="canvasModel3Boil" width="660" height="190" role="img" aria-label="Zwei Bechergläser mit Schwefeldioxid und Wasser bei variabler Temperatur"></canvas>
-                </figure>
               </div>
             </div>
           </div>
 
-          <!-- Mini-Check Teilschritt 3 -->
           <div class="minicheck-strip no-print">
             <div class="minicheck-head">
               <h3><span aria-hidden="true">✓</span> Mini-Check zu Teilschritt 3</h3>
-              <button type="button" class="btn btn-primary btn-sm next-step-btn" data-next="step4">Weiter zu Schritt 4 →</button>
+              <button type="button" class="btn btn-primary btn-sm next-step-btn" data-next="step4">Weiter zu Schritt 4 (London-WW) →</button>
             </div>
             <div class="quiz-grid-2" id="quiz-step3"></div>
           </div>
@@ -420,94 +436,125 @@
       </section>
 
       <!-- =================================================================
-           TEILSCHRITT 4: LÖSUNGSVERHALTEN & HYDRAT-HÜLLE
+           TEILSCHRITT 4: TEMPORÄRE DIPOLE & LONDON-WECHSELWIRKUNGEN (NEU KL. 10)
            ================================================================= -->
       <section role="tabpanel" class="step-panel" id="panel-step4" aria-labelledby="tab-step4" data-step="step4" hidden="until-found">
         <div class="panel-inner">
           <div class="split-layout">
-            <!-- Linke Spalte: Kompakter Informationstext -->
             <div class="info-column">
               <div class="level-badges">
-                <span class="level-badge macro"><span aria-hidden="true">👁️</span> Stoffebene</span>
                 <span class="level-badge particle"><span aria-hidden="true">🔍</span> Teilchenebene</span>
-                <span class="step-tag">Teilschritt 4 von 5</span>
+                <span class="step-tag">Neu in Kl. 10 · Schritt 4 von 7</span>
               </div>
-              <h2>Lösungsverhalten &amp; Hydrat-Hülle</h2>
+              <h2>Temporäre Dipole &amp; London-Wechselwirkungen</h2>
 
               <ul class="concise-list">
-                <li><strong>Grundregel:</strong> <em>„Ähnliches löst sich in Ähnlichem“</em> – polare Wasser-Dipole lösen andere polare Stoffe und Ionengitter (Salze).</li>
-                <li><strong>Hydrat-Hülle um Ionen (NaCl in Wasser):</strong> Wasser-Moleküle dringen ins NaCl-Ionengitter ein und umhüllen jedes Ion gerichtet:
-                  <ul class="sub-list">
-                    <li>Um <strong>Na⁺</strong> zeigt der negative <strong>O-Pol (δ⁻)</strong> nach innen.</li>
-                    <li>Um <strong>Cl⁻</strong> zeigen die positiven <strong>H-Pole (δ⁺)</strong> nach innen.</li>
-                  </ul>
-                </li>
-                <li><strong>Hydrophil vs. hydrophob:</strong> <strong>Hydrophile</strong> („wasserliebende“) Stoffe haben polare Bindungen / Dipol-Charakter (z. B. HCl, Zucker). <strong>Hydrophobe</strong> Stoffe sind unpolar (z. B. Pentan, Speiseöl) und mischen sich nicht mit Wasser.</li>
+                <li><strong>Symmetrische Ladungsdichte:</strong> In einem unpolaren Atom oder Molekül (z. B. Alkane) sind die Elektronen im zeitlichen Mittel symmetrisch um den Atomkern verteilt.</li>
+                <li><strong>Spontaner temporärer Dipol:</strong> Weil sich Elektronen ständig bewegen, kann es spontan und vorübergehend (<em>temporär</em>) zu einer <strong>ungleichen Ladungsverteilung</strong> kommen → ein <strong>temporärer Dipol</strong> entsteht (eine Seite <strong>δ⁺</strong>, die andere <strong>δ⁻</strong>).</li>
+                <li><strong>Induktion im Nachbarteilchen:</strong> Nähert sich ein temporärer Dipol einem Nachbarteilchen, „schiebt“ sein negativ teilgeladener Bereich (δ⁻) die Elektronen des Nachbarn auf die abgewandte Seite (Abstoßung gleicher Ladungen) → er <strong>induziert</strong> dort einen weiteren temporären Dipol.</li>
+                <li><strong>London-Wechselwirkungen (London-WW):</strong> Zwischen den entgegengesetzten Polen (δ⁻ ··· δ⁺) beider temporärer Dipole wirkt kurzzeitig eine elektrostatische Anziehung. Sie tritt zwischen <strong>allen</strong> Teilchen auf, ist aber bei unpolaren Stoffen (z. B. Alkanen) die einzige Anziehungskraft!</li>
+                <li><strong>Einfluss der Molekülgröße &amp; Oberfläche:</strong> Je <strong>größer das Molekül</strong> bzw. je größer seine <strong>Oberfläche</strong> (und die Anzahl der Elektronen), desto leichter lassen sich Elektronen verschieben → desto <strong>stärker sind die London-WW</strong>.</li>
               </ul>
+
+              <div class="merksatz-compact">
+                <strong>Merke:</strong> Temporäre Elektronenverschiebung + Induktion → kurzfristige elektrostatische Anziehung zwischen temporären Dipolen = <strong>London-Wechselwirkungen</strong>.
+              </div>
 
               <div class="try-box no-print">
                 <h3><span aria-hidden="true">🧪</span> Probier im Modell aus</h3>
                 <ol>
-                  <li>Klicke im <strong>Hydrat-Baukasten</strong> die Wasser-Moleküle um Na⁺ und Cl⁻ an, bis alle korrekt ausgerichtet sind.</li>
-                  <li>Teste im <strong>Löslichkeits-Becherglas</strong> Salz, HCl und flüssiges Pentan in Wasser.</li>
+                  <li>Klicke in <strong>Modell 4a</strong> der Reihe nach durch alle <strong>4 Phasen</strong> oder starte <strong>„⚡ Fluktuation animieren“</strong>.</li>
+                  <li>Wähle in <strong>Modell 4b</strong> die Alkane von <strong>CH₄</strong> bis <strong>C₈H₁₈</strong> und vergleiche Oberfläche, Elektronenzahl und London-WW-Stärke.</li>
                 </ol>
               </div>
             </div>
 
-            <!-- Rechte Spalte: Interaktives Modell 4 -->
             <div class="model-column">
               <div class="model-card">
                 <div class="model-header">
-                  <h3>Modell 4: Hydrat-Hüllen-Baukasten &amp; Löslichkeit</h3>
-                  <span class="model-status" id="m4StatusBadge">0 / 8 H₂O-Dipole ausgerichtet</span>
+                  <h3>Modell 4a: Entstehung temporärer Dipole &amp; Induktion</h3>
+                  <span class="model-status" id="m4LondonBadge">Phase 1 · symmetrisch</span>
                 </div>
 
-                <div class="preset-row" role="group" aria-label="Modus für Lösungsmodell wählen">
-                  <button type="button" class="chip-btn active" data-m4-mode="builder">1. Hydrat-Hülle selbst bauen</button>
-                  <button type="button" class="chip-btn" data-m4-mode="phases">2. NaCl-Auflösung (3 Phasen)</button>
-                  <button type="button" class="chip-btn" data-m4-mode="mix">3. Hydrophil vs. Hydrophob</button>
+                <div class="preset-row" role="group" aria-label="Phase der Entstehung eines temporären Dipols wählen">
+                  <button type="button" class="chip-btn active" data-m4-phase="0">1. Symmetrisch</button>
+                  <button type="button" class="chip-btn" data-m4-phase="1">2. Temporärer Dipol</button>
+                  <button type="button" class="chip-btn" data-m4-phase="2">3. Induktion</button>
+                  <button type="button" class="chip-btn" data-m4-phase="3">4. London-WW</button>
                 </div>
 
                 <figure class="canvas-figure">
-                  <canvas id="canvasModel4" width="660" height="310" role="img" aria-label="Interaktive Simulation zur Hydrat-Hülle von Natriumchlorid in Wasser und zum Lösungsverhalten"></canvas>
-                  <figcaption class="model-caption" id="m4Caption">
-                    Klicke auf jedes H₂O-Molekül, um es zu drehen: O (δ⁻) muss zum Na⁺-Ion zeigen, H (δ⁺) zum Cl⁻-Ion!
+                  <canvas id="canvasModel4London" width="660" height="270" role="img" aria-label="Interaktives Modell zur Entstehung eines spontanen temporären Dipols, Induktion und London-Wechselwirkung"></canvas>
+                  <figcaption class="model-caption" id="m4LondonCaption">
+                    Im Ruhezustand sind die Elektronen symmetrisch um den Atomkern verteilt → keine Teilladungen nach außen.
                   </figcaption>
                 </figure>
 
-                <!-- Modus-spezifische Steuerung -->
-                <div class="controls-bar" id="m4ControlsBuilder">
-                  <span class="small-hint">Tipp: Ein Klick/Tipp dreht das jeweilige H₂O-Molekül um 90°.</span>
+                <div class="controls-bar">
+                  <div class="slider-group flex-1">
+                    <div class="slider-label-row">
+                      <label for="m4ShiftSlider">Stärke der Elektronen-Verschiebung:</label>
+                      <output for="m4ShiftSlider" id="m4ShiftVal">0 %</output>
+                    </div>
+                    <input type="range" id="m4ShiftSlider" min="0" max="100" step="1" value="0">
+                  </div>
                   <div class="toggle-stack">
-                    <button type="button" class="btn btn-secondary btn-sm" id="m4AutoSolveBtn">Lösung zeigen</button>
-                    <button type="button" class="btn btn-ghost btn-sm" id="m4ScrambleBtn">Neu mischen</button>
+                    <button type="button" class="btn btn-secondary btn-sm" id="m4FluctuateBtn" aria-pressed="false">
+                      <span aria-hidden="true">⚡</span> Fluktuation animieren
+                    </button>
                   </div>
                 </div>
 
-                <div class="controls-bar" id="m4ControlsPhases" hidden>
-                  <div class="preset-row" style="margin:0;">
-                    <button type="button" class="chip-btn active" data-m4-phase="0">Phase 1: NaCl-Ionengitter</button>
-                    <button type="button" class="chip-btn" data-m4-phase="1">Phase 2: H₂O-Dipole lagern sich an</button>
-                    <button type="button" class="chip-btn" data-m4-phase="2">Phase 3: Hydrat-Hülle (gelöst)</button>
-                  </div>
+                <hr class="model-divider">
+
+                <div class="model-header">
+                  <h3>Modell 4b: Molekülgröße, Oberfläche &amp; London-WW (Alkane)</h3>
+                  <span class="model-status" id="m4AlkaneBadge">42 e⁻ · mittelstarke Kontaktfläche</span>
                 </div>
 
-                <div class="controls-bar" id="m4ControlsMix" hidden>
-                  <div class="preset-row" style="margin:0;">
-                    <button type="button" class="chip-btn active" data-m4-mix="nacl">NaCl (Salz) + H₂O</button>
-                    <button type="button" class="chip-btn" data-m4-mix="hcl">HCl (polar, hydrophil) + H₂O</button>
-                    <button type="button" class="chip-btn" data-m4-mix="pentan">Pentan (C₅H₁₂, unpolar) + H₂O</button>
-                  </div>
+                <div class="preset-row" role="group" aria-label="Alkan zum Vergleich der Oberfläche wählen">
+                  <button type="button" class="chip-btn" data-m4-alkane="c1">Methan (CH₄)</button>
+                  <button type="button" class="chip-btn" data-m4-alkane="c3">Propan (C₃H₈)</button>
+                  <button type="button" class="chip-btn active" data-m4-alkane="c5">Pentan (C₅H₁₂)</button>
+                  <button type="button" class="chip-btn" data-m4-alkane="c8">Octan (C₈H₁₈)</button>
                 </div>
+
+                <figure class="canvas-figure" style="margin-bottom:0;">
+                  <canvas id="canvasModel4Alkane" width="660" height="220" role="img" aria-label="Vergleich der Moleküloberfläche und Stärke der London-Wechselwirkungen bei Alkanen"></canvas>
+                  <figcaption class="model-caption" id="m4AlkaneCaption">
+                    Pentan (C₅H₁₂): Längere C₅-Kette = größere Oberfläche &amp; 42 Elektronen → stärkere London-WW als bei Methan (Sdp. +36 °C).
+                  </figcaption>
+                </figure>
               </div>
             </div>
           </div>
 
-          <!-- Mini-Check Teilschritt 4 -->
+          <!-- Arbeitsblatt-Transferaufgabe (Freitext mit Check) -->
+          <div class="transfer-box no-print">
+            <div class="transfer-head">
+              <h3><span aria-hidden="true">✏️</span> Arbeitsblatt-Aufgabe: Erkläre den Zusammenhang!</h3>
+              <span class="transfer-score" id="m4TransferScore">0 / 5 Fachbegriffe erkannt</span>
+            </div>
+            <p class="transfer-prompt">Kannst du nun den <strong>Zusammenhang zwischen Siedetemperatur der Alkane und Kettenlänge ihrer Moleküle</strong> erklären? Formuliere eine passende Erklärung in eigenen Worten!</p>
+            <label for="m4TransferInput" class="visually-hidden">Eigene Erklärung zum Zusammenhang zwischen Kettenlänge und Siedetemperatur der Alkane</label>
+            <textarea id="m4TransferInput" class="transfer-textarea" rows="3" placeholder="Beispiel: Je länger die Kohlenstoffkette der Alkane ist, desto größer wird die Moleküloberfläche und desto mehr Elektronen sind vorhanden ..."></textarea>
+            <div class="keyword-chips" id="m4KeywordChips" aria-live="polite">
+              <span class="keyword-chip" data-kw="chain">Kettenlänge / Molekülgröße</span>
+              <span class="keyword-chip" data-kw="surface">Oberfläche / Kontaktfläche</span>
+              <span class="keyword-chip" data-kw="electrons">Elektronenzahl</span>
+              <span class="keyword-chip" data-kw="london">Temporäre Dipole / London-WW</span>
+              <span class="keyword-chip" data-kw="energy">Energie / Siedetemperatur</span>
+            </div>
+            <details class="sample-solution">
+              <summary>Mustererklärung vergleichen</summary>
+              <p>Je größer die Kettenlänge eines Alkan-Moleküls ist, desto mehr Elektronen besitzt es und desto größer ist seine Moleküloberfläche. Dadurch steigt die Wahrscheinlichkeit ungleicher Elektronenverteilungen, und zwischen benachbarten Molekülen bilden sich über größere Kontaktflächen mehr temporäre und induzierte Dipole aus. Folglich werden die <strong>London-Wechselwirkungen</strong> stärker, man benötigt mehr Wärmeenergie zum Überwinden dieser Anziehungskräfte und die <strong>Siedetemperatur steigt</strong>.</p>
+            </details>
+          </div>
+
           <div class="minicheck-strip no-print">
             <div class="minicheck-head">
               <h3><span aria-hidden="true">✓</span> Mini-Check zu Teilschritt 4</h3>
-              <button type="button" class="btn btn-primary btn-sm next-step-btn" data-next="step5">Zum Gesamt-Check →</button>
+              <button type="button" class="btn btn-primary btn-sm next-step-btn" data-next="step5">Weiter zu Auswirkungen (Schritt 5) →</button>
             </div>
             <div class="quiz-grid-2" id="quiz-step4"></div>
           </div>
@@ -515,49 +562,246 @@
       </section>
 
       <!-- =================================================================
-           TEILSCHRITT 5: GESAMT-CHECK & KOMPAKT-ÜBERBLICK
+           TEILSCHRITT 5: AUSWIRKUNG 1 — SIEDETEMPERATUREN & AGGREGATZUSTÄNDE
            ================================================================= -->
       <section role="tabpanel" class="step-panel" id="panel-step5" aria-labelledby="tab-step5" data-step="step5" hidden="until-found">
         <div class="panel-inner">
+          <div class="split-layout">
+            <div class="info-column">
+              <div class="level-badges">
+                <span class="level-badge macro"><span aria-hidden="true">👁️</span> Stoffebene</span>
+                <span class="level-badge particle"><span aria-hidden="true">🔍</span> Teilchenebene</span>
+                <span class="step-tag">Auswirkungen · Schritt 5 von 7</span>
+              </div>
+              <h2>Auswirkung 1: Siedetemperaturen &amp; Alkan-Reihe</h2>
+
+              <ul class="concise-list">
+                <li><strong>Grundprinzip (Stoffebene):</strong> Die Siedetemperatur zeigt, wie viel Wärmeenergie nötig ist, um die Teilchen voneinander zu trennen. <strong>Beim Sieden bleiben die Moleküle selbst intakt</strong> – nur die zwischenmolekularen Kräfte werden überwunden.</li>
+                <li><strong>Vergleich der drei WW-Typen (ähnliche Molekülgröße):</strong>
+                  <ul class="sub-list">
+                    <li><strong>CH₄ (unpolar, London-WW):</strong> sehr schwach bei kleinen Molekülen → Sdp. <strong>−162 °C</strong>.</li>
+                    <li><strong>SO₂ (permanenter Dipol, Dipol-Dipol-WW):</strong> mittelstark → Sdp. <strong>−10 °C</strong>.</li>
+                    <li><strong>H₂O (permanenter Dipol, H-Brücken):</strong> besonders stark → Sdp. <strong>+100 °C</strong>.</li>
+                  </ul>
+                </li>
+                <li><strong>Homologe Reihe der Alkane:</strong> Von Methan (CH₄, Gas, −162 °C) über Pentan (C₅H₁₂, flüssig, +36 °C) bis Octan (C₈H₁₈, +126 °C) steigen die <strong>London-WW</strong> wegen der wachsenden Moleküloberfläche so stark an, dass Alkane ab C₅ bei Raumtemperatur flüssig sind!</li>
+              </ul>
+
+              <div class="merksatz-compact">
+                <strong>Merke:</strong> Stärkere zwischenmolekulare WW → höhere Siedetemperatur. Große unpolare Ketten (z. B. Octan, Wachse) können durch starke London-WW sogar flüssig oder fest sein!
+              </div>
+
+              <div class="try-box no-print">
+                <h3><span aria-hidden="true">🧪</span> Probier im Modell aus</h3>
+                <ol>
+                  <li>Bewege die <strong>Heizplatte</strong> in Modell 5a von <strong>−170 °C</strong> über <strong>20 °C</strong> auf <strong>+110 °C</strong> und beobachte die 3 Bechergläser.</li>
+                  <li>Klicke im Diagramm (Modell 5b) auf <strong>Pentan (C₅)</strong> und vergleiche seine Siedetemperatur (+36 °C) mit Methan (−162 °C) und Octan (+126 °C).</li>
+                </ol>
+              </div>
+            </div>
+
+            <div class="model-column">
+              <div class="model-card">
+                <div class="model-header">
+                  <h3>Modell 5a: 3-WW-Siedesimulator (CH₄ · SO₂ · H₂O)</h3>
+                  <span class="temp-readout" id="m5TempBadge">T = 20 °C (Raumtemp.)</span>
+                </div>
+
+                <div class="slider-group">
+                  <div class="slider-label-row">
+                    <label for="m5TempSlider">Heizplatte / Kühlung einstellen:</label>
+                    <output for="m5TempSlider" id="m5TempVal">20 °C</output>
+                  </div>
+                  <input type="range" id="m5TempSlider" min="-180" max="120" step="1" value="20">
+                </div>
+
+                <div class="preset-row" role="group" aria-label="Schnellwahl Temperatur" style="margin-top:0.35rem;">
+                  <button type="button" class="chip-btn" data-m5-temp="-170">−170 °C (alle flüssig)</button>
+                  <button type="button" class="chip-btn" data-m5-temp="-50">−50 °C (CH₄ gasförmig)</button>
+                  <button type="button" class="chip-btn active" data-m5-temp="20">20 °C (Raumtemp.)</button>
+                  <button type="button" class="chip-btn" data-m5-temp="110">+110 °C (alle gasförmig)</button>
+                </div>
+
+                <figure class="canvas-figure">
+                  <canvas id="canvasModel5Boil" width="660" height="210" role="img" aria-label="Drei Bechergläser im Temperaturvergleich: Methan mit London-WW, Schwefeldioxid mit Dipol-Dipol-WW und Wasser mit Wasserstoffbrücken"></canvas>
+                </figure>
+
+                <hr class="model-divider">
+
+                <div class="model-header">
+                  <h3>Modell 5b: Siedetemperaturen der Alkane (C₁ bis C₁₀)</h3>
+                  <span class="model-status" id="m5AlkanInfoBadge">C₅H₁₂ (Pentan): +36 °C</span>
+                </div>
+
+                <figure class="canvas-figure" style="margin-bottom:0;">
+                  <canvas id="canvasModel5AlkaneChart" width="660" height="220" role="img" aria-label="Interaktives Säulendiagramm der Siedetemperaturen von Methan bis Decan"></canvas>
+                  <figcaption class="model-caption" id="m5AlkaneCaption">
+                    Klicke auf einen Balken im Diagramm: Bei 20 °C sind C₁–C₄ gasförmig, ab C₅ (Pentan, Sdp. +36 °C) durch stärkere London-WW flüssig!
+                  </figcaption>
+                </figure>
+              </div>
+            </div>
+          </div>
+
+          <div class="minicheck-strip no-print">
+            <div class="minicheck-head">
+              <h3><span aria-hidden="true">✓</span> Mini-Check zu Teilschritt 5</h3>
+              <button type="button" class="btn btn-primary btn-sm next-step-btn" data-next="step6">Weiter zu Schritt 6 (Löslichkeit) →</button>
+            </div>
+            <div class="quiz-grid-2" id="quiz-step5"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- =================================================================
+           TEILSCHRITT 6: AUSWIRKUNG 2 — LÖSUNGSVERHALTEN & HYDRAT-HÜLLE
+           ================================================================= -->
+      <section role="tabpanel" class="step-panel" id="panel-step6" aria-labelledby="tab-step6" data-step="step6" hidden="until-found">
+        <div class="panel-inner">
+          <div class="split-layout">
+            <div class="info-column">
+              <div class="level-badges">
+                <span class="level-badge macro"><span aria-hidden="true">👁️</span> Stoffebene</span>
+                <span class="level-badge particle"><span aria-hidden="true">🔍</span> Teilchenebene</span>
+                <span class="step-tag">Auswirkungen · Schritt 6 von 7</span>
+              </div>
+              <h2>Auswirkung 2: Lösungsverhalten &amp; Hydrat-Hülle</h2>
+
+              <ul class="concise-list">
+                <li><strong>Grundregel:</strong> <em>„Ähnliches löst sich in Ähnlichem.“</em>
+                  <ul class="sub-list">
+                    <li><strong>Polare Stoffe &amp; Salze</strong> lösen sich in polarem Wasser (H-Brücken / Ion-Dipol-WW → <strong>hydrophil</strong>).</li>
+                    <li><strong>Unpolare Stoffe</strong> (z. B. Pentan C₅H₁₂, Heptan, Speiseöl) mischen sich untereinander über <strong>London-WW</strong> (<strong>hydrophob / lipophil</strong>), trennen sich aber von Wasser!</li>
+                  </ul>
+                </li>
+                <li><strong>Hydrat-Hülle um Ionen (NaCl in Wasser):</strong> Wasser-Dipole richten sich um jedes Ion aus:
+                  <ul class="sub-list">
+                    <li>Um <strong>Na⁺</strong> zeigt der negative <strong>O-Pol (δ⁻)</strong> nach innen.</li>
+                    <li>Um <strong>Cl⁻</strong> zeigen die positiven <strong>H-Pole (δ⁺)</strong> nach innen.</li>
+                  </ul>
+                </li>
+              </ul>
+
+              <div class="try-box no-print">
+                <h3><span aria-hidden="true">🧪</span> Probier im Modell aus</h3>
+                <ol>
+                  <li>Klicke im <strong>Hydrat-Baukasten</strong> die Wasser-Moleküle um Na⁺ und Cl⁻ an, bis alle 8 korrekt ausgerichtet sind.</li>
+                  <li>Vergleiche in Modus 3 <strong>Pentan + H₂O</strong> (Phasentrennung) mit <strong>Pentan + Heptan</strong> (homogen über London-WW).</li>
+                </ol>
+              </div>
+            </div>
+
+            <div class="model-column">
+              <div class="model-card">
+                <div class="model-header">
+                  <h3>Modell 6: Hydrat-Hüllen-Baukasten &amp; Löslichkeit</h3>
+                  <span class="model-status" id="m6StatusBadge">0 / 8 H₂O-Dipole ausgerichtet</span>
+                </div>
+
+                <div class="preset-row" role="group" aria-label="Modus für Lösungsmodell wählen">
+                  <button type="button" class="chip-btn active" data-m6-mode="builder">1. Hydrat-Hülle selbst bauen</button>
+                  <button type="button" class="chip-btn" data-m6-mode="phases">2. NaCl-Auflösung (3 Phasen)</button>
+                  <button type="button" class="chip-btn" data-m6-mode="mix">3. Hydrophil vs. Hydrophob</button>
+                </div>
+
+                <figure class="canvas-figure">
+                  <canvas id="canvasModel6" width="660" height="310" role="img" aria-label="Interaktive Simulation zur Hydrat-Hülle von Natriumchlorid in Wasser und zum Lösungsverhalten"></canvas>
+                  <figcaption class="model-caption" id="m6Caption">
+                    Klicke auf jedes H₂O-Molekül, um es zu drehen: O (δ⁻) muss zum Na⁺-Ion zeigen, H (δ⁺) zum Cl⁻-Ion!
+                  </figcaption>
+                </figure>
+
+                <div class="controls-bar" id="m6ControlsBuilder">
+                  <span class="small-hint">Tipp: Ein Klick/Tipp dreht das jeweilige H₂O-Molekül um 90°.</span>
+                  <div class="toggle-stack">
+                    <button type="button" class="btn btn-secondary btn-sm" id="m6AutoSolveBtn">Lösung zeigen</button>
+                    <button type="button" class="btn btn-ghost btn-sm" id="m6ScrambleBtn">Neu mischen</button>
+                  </div>
+                </div>
+
+                <div class="controls-bar" id="m6ControlsPhases" hidden>
+                  <div class="preset-row" style="margin:0;">
+                    <button type="button" class="chip-btn active" data-m6-phase="0">Phase 1: NaCl-Ionengitter</button>
+                    <button type="button" class="chip-btn" data-m6-phase="1">Phase 2: H₂O-Dipole lagern sich an</button>
+                    <button type="button" class="chip-btn" data-m6-phase="2">Phase 3: Hydrat-Hülle (gelöst)</button>
+                  </div>
+                </div>
+
+                <div class="controls-bar" id="m6ControlsMix" hidden>
+                  <div class="preset-row" style="margin:0;">
+                    <button type="button" class="chip-btn active" data-m6-mix="nacl">NaCl (Salz) + H₂O</button>
+                    <button type="button" class="chip-btn" data-m6-mix="hcl">HCl (polar) + H₂O</button>
+                    <button type="button" class="chip-btn" data-m6-mix="pentan">Pentan (unpolar) + H₂O</button>
+                    <button type="button" class="chip-btn" data-m6-mix="alkanes">Pentan + Heptan (unpolar)</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="minicheck-strip no-print">
+            <div class="minicheck-head">
+              <h3><span aria-hidden="true">✓</span> Mini-Check zu Teilschritt 6</h3>
+              <button type="button" class="btn btn-primary btn-sm next-step-btn" data-next="step7">Zum Gesamt-Check →</button>
+            </div>
+            <div class="quiz-grid-2" id="quiz-step6"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- =================================================================
+           TEILSCHRITT 7: GESAMT-CHECK & KOMPAKT-SPICKZETTEL
+           ================================================================= -->
+      <section role="tabpanel" class="step-panel" id="panel-step7" aria-labelledby="tab-step7" data-step="step7" hidden="until-found">
+        <div class="panel-inner">
           <div class="step5-header">
             <div>
-              <span class="step-tag">Teilschritt 5 von 5</span>
-              <h2>Gesamt-Check &amp; Spickzettel für Klasse 10</h2>
-              <p class="small-lead">Teste dein aufgefrischtes Wissen aus den Schritten 1–4. Unten siehst du alles auf einen Blick zum Speichern oder Drucken.</p>
+              <span class="step-tag">Gesamt-Überblick · Schritt 7 von 7</span>
+              <h2>Gesamt-Check &amp; Spickzettel (Klasse 9 &amp; 10)</h2>
+              <p class="small-lead">Teste dein Wissen über alle drei Bereiche — von polaren Bindungen (Kl. 9) über London-WW (Kl. 10) bis zu Siedetemperaturen &amp; Löslichkeit.</p>
             </div>
             <button type="button" class="btn btn-primary no-print" id="printSummaryBtnInner">
               <span aria-hidden="true">🖨️</span> Übersicht als PDF drucken
             </button>
           </div>
 
-          <div class="quiz-grid-2 no-print" id="quiz-step5"></div>
+          <div class="quiz-grid-2 no-print" id="quiz-step7"></div>
 
-          <!-- Kompakter Spickzettel (auch für Print-Ansicht optimiert) -->
           <div class="cheat-sheet" id="cheatSheet">
-            <h3>Spickzettel: Von der Elektronegativität zu den Stoffeigenschaften</h3>
+            <h3>Spickzettel: Alle zwischenmolekularen Wechselwirkungen auf einen Blick</h3>
             <div class="cheat-grid">
               <article class="cheat-box">
-                <h4>1. Polare Bindung (ΔEN)</h4>
+                <h4>1. Polare Bindung (ΔEN) · Kl. 9</h4>
                 <p><strong>EN steigt</strong> im PSE nach rechts oben (F = 4,0; Fr = 0,7).</p>
-                <p><strong>ΔEN ≤ 0,4:</strong> unpolar (H₂, C–H in CH₄)</p>
+                <p><strong>ΔEN ≤ 0,4:</strong> unpolar (H₂, C–H in Alkanen)</p>
                 <p><strong>ΔEN &gt; 0,5:</strong> polar → Teilladungen δ⁺ / δ⁻ (HCl, H₂O)</p>
               </article>
               <article class="cheat-box">
-                <h4>2. Symmetrie-Check</h4>
-                <p><strong>CO₂ (linear, 180°):</strong> Schwerpunkte von δ⁺ &amp; δ⁻ fallen auf dem C-Atom zusammen → <strong>kein Dipol</strong>.</p>
-                <p><strong>CH₄ (Tetraeder):</strong> punktsymmetrisch → unpolar, hydrophob.</p>
-                <p><strong>H₂O (104,5°):</strong> gewinkelt → <strong>Dipol</strong>.</p>
+                <h4>2. Symmetrie-Check (Dipole) · Kl. 9</h4>
+                <p><strong>CO₂ (180°) &amp; CH₄ (Tetraeder):</strong> Ladungsschwerpunkte fallen zusammen → <strong>kein permanenter Dipol</strong>.</p>
+                <p><strong>H₂O (104,5°) &amp; SO₂ (119°):</strong> gewinkelt → <strong>permanenter Dipol</strong>.</p>
               </article>
               <article class="cheat-box">
-                <h4>3. Zwischenmolekulare WW</h4>
-                <p><strong>Wasserstoffbrücken</strong> (H₂O, Sdp. 100 °C): besonders starke WW (H an F, O, N + freies e⁻-Paar).</p>
-                <p><strong>Dipol-Dipol-WW</strong> (SO₂, Sdp. −10 °C): mittelstarke elektrostatische Anziehung permanenter Dipole (δ⁺ ··· δ⁻).</p>
+                <h4>3. Permanente Dipole · Kl. 9</h4>
+                <p><strong>Dipol-Dipol-WW</strong> (z. B. SO₂, Sdp. −10 °C): mittelstarke Anziehung zwischen δ⁺ und δ⁻ permanenter Dipole.</p>
+                <p><strong>Wasserstoffbrücken</strong> (z. B. H₂O, Sdp. +100 °C): sehr stark (H an F, O, N + freies Elektronenpaar).</p>
               </article>
               <article class="cheat-box">
-                <h4>4. Lösungsverhalten</h4>
+                <h4>4. Temporäre Dipole &amp; London-WW · Kl. 10</h4>
+                <p>Spontane Elektronenverschiebung erzeugt einen <strong>temporären Dipol</strong> (δ⁺ / δ⁻) und <strong>induziert</strong> einen Dipol im Nachbarteilchen.</p>
+                <p><strong>London-WW:</strong> wachsen mit der <strong>Moleküloberfläche</strong> und <strong>Elektronenzahl</strong> (z. B. Alkan-Ketten).</p>
+              </article>
+              <article class="cheat-box">
+                <h4>5. Auswirkung: Siedetemperaturen</h4>
+                <p>Beim Sieden werden nur zwischenmolekulare WW überwunden, keine Atombindungen.</p>
+                <p><strong>Vergleich:</strong> CH₄ (−162 °C) &lt; SO₂ (−10 °C) &lt; H₂O (+100 °C).</p>
+                <p><strong>Alkane:</strong> Je länger die Kette, desto stärker die London-WW → höherer Sdp. (ab C₅ flüssig).</p>
+              </article>
+              <article class="cheat-box">
+                <h4>6. Auswirkung: Lösungsverhalten</h4>
                 <p><em>„Ähnliches löst sich in Ähnlichem.“</em></p>
-                <p><strong>Hydrat-Hülle um NaCl:</strong> O (δ⁻) zu Na⁺, H (δ⁺) zu Cl⁻.</p>
-                <p><strong>Hydrophil:</strong> polar / Ionen · <strong>Hydrophob:</strong> unpolar.</p>
+                <p><strong>Hydrophil:</strong> Salze (Hydrat-Hülle: Oδ⁻ zu Na⁺, Hδ⁺ zu Cl⁻) &amp; polare Moleküle in H₂O.</p>
+                <p><strong>Hydrophob / lipophil:</strong> Unpolares (Pentan + Heptan) löst sich über London-WW, trennt sich aber von H₂O.</p>
               </article>
             </div>
           </div>
@@ -568,8 +812,7 @@
   </main>
 
   <footer class="site-footer no-print">
-    <p>Schule Birklehof · Fachschaft Chemie · Vorwissen-Auffrischung Klasse 9 → 10 · Lokal im Browser gespeichert.</p>
+    <p>Schule Birklehof · Fachschaft Chemie · Klasse 9 &amp; 10: Zwischenmolekulare Wechselwirkungen · Lokal im Browser gespeichert.</p>
   </footer>
 </body>
 </html>
-
