@@ -489,6 +489,21 @@
                   </figcaption>
                 </figure>
 
+                <div class="controls-bar" id="m4InductionControls" hidden>
+                  <div class="slider-group flex-1">
+                    <div class="slider-label-row">
+                      <label for="m4ApproachSlider">Annäherung (Teilchen 1 → Teilchen 2):</label>
+                      <output for="m4ApproachSlider" id="m4ApproachVal">Nah · Induktion aktiv (100 %)</output>
+                    </div>
+                    <input type="range" id="m4ApproachSlider" min="0" max="100" step="1" value="100">
+                  </div>
+                  <div class="toggle-stack">
+                    <button type="button" class="btn btn-ghost btn-sm" id="m4ReplayApproachBtn">
+                      <span aria-hidden="true">↺</span> Annäherung abspielen
+                    </button>
+                  </div>
+                </div>
+
                 <div class="controls-bar">
                   <span class="small-hint">Elektronen fluktuieren fortlaufend · Phase oben wählen oder pausieren</span>
                   <div class="toggle-stack">

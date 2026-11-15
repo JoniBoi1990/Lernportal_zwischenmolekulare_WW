@@ -308,6 +308,9 @@
       shiftPct: 82,
       fluctuateOn: true,
       fluctuatePhase: 0.9,
+      approachPct: 100,
+      approachAnimating: false,
+      draggingP1: false,
       alkane: "c5",
       transferText: ""
     },
@@ -1993,16 +1996,60 @@
     const phaseBtns = document.querySelectorAll("[data-m4-phase]");
     const nextPhaseBtn = document.getElementById("m4NextPhaseBtn");
     const fluctuateBtn = document.getElementById("m4FluctuateBtn");
+    const inductionControls = document.getElementById("m4InductionControls");
+    const approachSlider = document.getElementById("m4ApproachSlider");
+    const approachVal = document.getElementById("m4ApproachVal");
+    const replayApproachBtn = document.getElementById("m4ReplayApproachBtn");
+    const londonCanvas = document.getElementById("canvasModel4London");
     const alkaneBtns = document.querySelectorAll("[data-m4-alkane]");
     const alkaneCanvas = document.getElementById("canvasModel4Alkane");
     const transferInput = document.getElementById("m4TransferInput");
 
-    function setPhase(p) {
+    function syncApproachUI() {
+      if (inductionControls) {
+        inductionControls.hidden = state.m4.phase !== 2;
+      }
+      const pct = Math.round(state.m4.approachPct);
+      if (approachSlider) {
+        approachSlider.value = String(pct);
+        syncSliderVisual(approachSlider);
+      }
+      if (approachVal) {
+        if (pct < 25) {
+          approachVal.textContent = `Weit entfernt · keine Induktion (${pct} %)`;
+        } else if (pct < 70) {
+          approachVal.textContent = `Annäherung · Induktion beginnt (${pct} %)`;
+        } else {
+          approachVal.textContent = `Nah · Induktion aktiv (${pct} %)`;
+        }
+      }
+      if (londonCanvas && state.m4.phase !== 2) {
+        londonCanvas.style.cursor = "default";
+      }
+    }
+
+    function triggerApproachAnimation() {
+      state.m4.approachPct = 0;
+      state.m4.approachAnimating = true;
+      syncApproachUI();
+      startFluctuationLoop();
+      drawModel4London();
+    }
+
+    function setPhase(p, fromUserClick = false) {
       state.m4.phase = p;
       phaseBtns.forEach((b) => b.classList.toggle("active", parseInt(b.dataset.m4Phase, 10) === p));
       if (!state.m4.fluctuateOn && Math.abs(Math.sin(state.m4.fluctuatePhase)) < 0.45) {
         state.m4.fluctuatePhase = Math.sin(state.m4.fluctuatePhase) < 0 ? -0.95 : 0.95;
       }
+      if (p === 2 && fromUserClick) {
+        triggerApproachAnimation();
+        return;
+      }
+      if (p !== 2) {
+        state.m4.approachAnimating = false;
+      }
+      syncApproachUI();
       drawModel4London();
     }
 
@@ -2014,13 +2061,13 @@
 
     phaseBtns.forEach((btn) => {
       btn.addEventListener("click", () => {
-        setPhase(parseInt(btn.dataset.m4Phase, 10));
+        setPhase(parseInt(btn.dataset.m4Phase, 10), true);
       });
     });
 
     if (nextPhaseBtn) {
       nextPhaseBtn.addEventListener("click", () => {
-        setPhase((state.m4.phase + 1) % 4);
+        setPhase((state.m4.phase + 1) % 4, true);
       });
     }
 
@@ -2038,18 +2085,40 @@
         cancelAnimationFrame(m4FluctuateRafId);
         m4FluctuateRafId = null;
       }
-      if (!state.m4.fluctuateOn) return;
+      if (!state.m4.fluctuateOn && !state.m4.approachAnimating) return;
       let lastTs = performance.now();
       const tick = (now) => {
-        if (!state.m4.fluctuateOn) return;
+        if (!state.m4.fluctuateOn && !state.m4.approachAnimating) {
+          m4FluctuateRafId = null;
+          return;
+        }
         const dt = Math.min(0.05, Math.max(0.001, (now - lastTs) / 1000));
         lastTs = now;
         if (state.activeStep === "step4") {
-          state.m4.fluctuatePhase += dt * 1.85;
-          state.m4.shiftPct = Math.round(95 * Math.sin(state.m4.fluctuatePhase));
-          drawModel4London();
+          let needsDraw = false;
+          if (state.m4.fluctuateOn) {
+            state.m4.fluctuatePhase += dt * 1.85;
+            state.m4.shiftPct = Math.round(95 * Math.sin(state.m4.fluctuatePhase));
+            needsDraw = true;
+          }
+          if (state.m4.approachAnimating) {
+            state.m4.approachPct = Math.min(100, state.m4.approachPct + dt * 58);
+            if (state.m4.approachPct >= 100) {
+              state.m4.approachPct = 100;
+              state.m4.approachAnimating = false;
+            }
+            syncApproachUI();
+            needsDraw = true;
+          }
+          if (needsDraw) {
+            drawModel4London();
+          }
         }
-        m4FluctuateRafId = requestAnimationFrame(tick);
+        if (state.m4.fluctuateOn || state.m4.approachAnimating) {
+          m4FluctuateRafId = requestAnimationFrame(tick);
+        } else {
+          m4FluctuateRafId = null;
+        }
       };
       m4FluctuateRafId = requestAnimationFrame(tick);
     }
@@ -2060,8 +2129,9 @@
         state.m4.fluctuatePhase = Math.sin(state.m4.fluctuatePhase) < 0 ? -0.95 : 0.95;
       }
       syncFluctuateBtn();
-      if (state.m4.fluctuateOn) {
+      if (state.m4.fluctuateOn || state.m4.approachAnimating) {
         startFluctuationLoop();
+        if (!state.m4.fluctuateOn) drawModel4London();
       } else {
         if (m4FluctuateRafId) {
           cancelAnimationFrame(m4FluctuateRafId);
@@ -2073,6 +2143,72 @@
 
     if (fluctuateBtn) {
       fluctuateBtn.addEventListener("click", () => toggleFluctuation());
+    }
+
+    if (approachSlider) {
+      approachSlider.addEventListener("input", () => {
+        state.m4.approachAnimating = false;
+        state.m4.approachPct = Number(approachSlider.value);
+        syncApproachUI();
+        drawModel4London();
+      });
+    }
+
+    if (replayApproachBtn) {
+      replayApproachBtn.addEventListener("click", () => {
+        triggerApproachAnimation();
+      });
+    }
+
+    if (londonCanvas) {
+      const toM4Coords = (evt) => {
+        const rect = londonCanvas.getBoundingClientRect();
+        return {
+          x: ((evt.clientX - rect.left) / rect.width) * 660,
+          y: ((evt.clientY - rect.top) / rect.height) * 270
+        };
+      };
+
+      londonCanvas.addEventListener("pointerdown", (e) => {
+        if (state.m4.phase !== 2) return;
+        const pt = toM4Coords(e);
+        const curX1 = 135 + (state.m4.approachPct / 100) * 85;
+        if (Math.hypot(pt.x - curX1, pt.y - 132) <= 70 || (pt.x <= 290 && pt.y >= 70 && pt.y <= 195)) {
+          state.m4.draggingP1 = true;
+          state.m4.approachAnimating = false;
+          state.m4.approachPct = Math.round(Math.max(0, Math.min(100, ((pt.x - 135) / 85) * 100)));
+          londonCanvas.style.cursor = "grabbing";
+          londonCanvas.setPointerCapture(e.pointerId);
+          syncApproachUI();
+          drawModel4London();
+        }
+      });
+
+      londonCanvas.addEventListener("pointermove", (e) => {
+        if (state.m4.phase !== 2) {
+          londonCanvas.style.cursor = "default";
+          return;
+        }
+        const pt = toM4Coords(e);
+        if (state.m4.draggingP1) {
+          state.m4.approachPct = Math.round(Math.max(0, Math.min(100, ((pt.x - 135) / 85) * 100)));
+          syncApproachUI();
+          drawModel4London();
+        } else {
+          const curX1 = 135 + (state.m4.approachPct / 100) * 85;
+          const overP1 = Math.hypot(pt.x - curX1, pt.y - 132) <= 60;
+          londonCanvas.style.cursor = overP1 ? "grab" : "default";
+        }
+      });
+
+      const endM4Drag = (e) => {
+        if (!state.m4.draggingP1) return;
+        state.m4.draggingP1 = false;
+        londonCanvas.style.cursor = state.m4.phase === 2 ? "grab" : "default";
+        try { londonCanvas.releasePointerCapture(e.pointerId); } catch (_) {}
+      };
+      londonCanvas.addEventListener("pointerup", endM4Drag);
+      londonCanvas.addEventListener("pointercancel", endM4Drag);
     }
 
     alkaneBtns.forEach((btn) => {
@@ -2121,7 +2257,7 @@
       });
     }
 
-    // Optional query-parameter support for Phase/Pause/Direction (e.g. ?m4phase=2&m4pause=1&m4dir=-1)
+    // Optional query-parameter support for Phase/Pause/Direction/Approach (e.g. ?m4phase=2&m4approach=10&m4pause=1&m4dir=1)
     let initPhase = 0;
     try {
       const sp = new URLSearchParams(window.location.search);
@@ -2130,13 +2266,18 @@
       const qDir = parseInt(sp.get("m4dir"), 10);
       if (qDir === -1) state.m4.fluctuatePhase = -0.95;
       else if (qDir === 1) state.m4.fluctuatePhase = 0.95;
+      const qApproach = parseInt(sp.get("m4approach"), 10);
+      if (!Number.isNaN(qApproach) && qApproach >= 0 && qApproach <= 100) {
+        state.m4.approachPct = qApproach;
+        state.m4.approachAnimating = false;
+      }
       if (sp.get("m4pause") === "1") state.m4.fluctuateOn = false;
     } catch (_) {}
 
     syncFluctuateBtn();
-    setPhase(initPhase);
+    setPhase(initPhase, false);
     setSelectedAlkane(state.m4.alkane || "c5");
-    if (state.m4.fluctuateOn) {
+    if (state.m4.fluctuateOn || state.m4.approachAnimating) {
       startFluctuationLoop();
     }
   }
@@ -2384,68 +2525,205 @@
       badge.classList.add("warn");
       caption.textContent = "Durch spontane Bewegung verteilen sich die Elektronen kurzzeitig ungleich → ein temporärer Dipol entsteht.";
     } else if (p === 2) {
-      // Phase 3: Annäherung & Induktion (continuous sinusoidal glide through 0)
-      const effShift = shift;
-      const x1 = 215;
-      const x2 = 445;
-      const cy = 140;
+      // Phase 3: Annäherung (Vorschlag A) & kausale Kraftübertragung im Spalt + leichter Nachlauf (Vorschlag B)
+      const approach = Math.max(0, Math.min(1, (state.m4.approachPct ?? 100) / 100));
+      const coupling = Math.pow(approach, 1.35);
+      const x1 = 135 + approach * 85;
+      const x2 = 450;
+      const cy = 132;
+      const r = 50;
 
-      drawPolarizableSphere(ctx, x1, cy, 52, effShift, pal);
-      drawPolarizableSphere(ctx, x2, cy, 52, effShift * 0.92, pal);
+      const phase1 = state.m4.fluctuatePhase;
+      const shift1 = shift;
+      const delayedWave = state.m4.fluctuateOn
+        ? Math.sin(phase1 - 0.42) * 0.92
+        : shift1 * 0.92;
+      const idleMicro = Math.sin(phase1 * 1.6 + 0.8) * 0.22 * (1 - coupling);
+      const shift2 = delayedWave * coupling + idleMicro;
+      const showDelta2 = coupling > 0.28;
 
-      // Labels under spheres
-      ctx.font = `700 11.5px ${CANVAS_FONT}`;
-      ctx.textAlign = "center";
-      ctx.fillStyle = pal.ink;
-      ctx.fillText("1. Temporärer Dipol", x1, cy + 72);
-      ctx.fillStyle = pal.teal;
-      ctx.fillText("2. Induzierter temporärer Dipol", x2, cy + 72);
+      drawPolarizableSphere(ctx, x1, cy, r, shift1, pal, true, true);
+      drawPolarizableSphere(ctx, x2, cy, r, shift2, pal, coupling > 0.35, showDelta2);
 
-      // Synchronized curved induction arrow fading smoothly near 0
-      const arrowAlpha = Math.max(0, Math.min(1, (absShift - 0.08) / 0.32));
-      const pushRight = effShift >= 0;
-      if (arrowAlpha > 0.01) {
-        const arrowColor = pushRight ? pal.deltaMinus : pal.deltaPlus;
-        const startX = pushRight ? x1 + 42 : x2 + 30;
-        const endX = pushRight ? x2 + 34 : x1 + 52;
-        const ctrlY = 42;
-
+      // Zeitmittel-Blende auf Teilchen 2 solange noch kaum Polarisation induziert wird
+      if (coupling < 0.85) {
         ctx.save();
-        ctx.globalAlpha = arrowAlpha;
-        ctx.strokeStyle = arrowColor;
-        ctx.lineWidth = 2.4;
+        ctx.globalAlpha = (1 - coupling) * 0.85;
         ctx.beginPath();
-        ctx.moveTo(startX, 62);
-        ctx.quadraticCurveTo(w / 2, ctrlY, endX, 62);
+        ctx.arc(x2, cy, r + 6, 0, Math.PI * 2);
+        ctx.strokeStyle = pal.muted;
+        ctx.lineWidth = 1.5;
+        ctx.setLineDash([5, 4]);
         ctx.stroke();
-
-        const ang = Math.atan2(62 - ctrlY, endX - w / 2);
-        const headLen = 10;
-        ctx.beginPath();
-        ctx.moveTo(endX, 62);
-        ctx.lineTo(endX - headLen * Math.cos(ang - 0.48), 62 - headLen * Math.sin(ang - 0.48));
-        ctx.lineTo(endX - headLen * Math.cos(ang + 0.48), 62 - headLen * Math.sin(ang + 0.48));
-        ctx.closePath();
-        ctx.fillStyle = arrowColor;
-        ctx.fill();
         ctx.restore();
       }
 
+      if (coupling <= 0.28) {
+        const neutralPill = "⏱ Im Zeitmittel noch unpolar";
+        ctx.font = `700 10.5px ${CANVAS_FONT}`;
+        const pillW = Math.ceil(ctx.measureText(neutralPill).width + 20);
+        ctx.save();
+        ctx.globalAlpha = Math.max(0.25, 1 - coupling / 0.28);
+        drawRoundedRect(ctx, x2 - pillW / 2, 46, pillW, 22, 999);
+        ctx.fillStyle = pal.surface;
+        ctx.fill();
+        ctx.strokeStyle = pal.border;
+        ctx.lineWidth = 1.3;
+        ctx.stroke();
+        ctx.fillStyle = pal.muted;
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillText(neutralPill, x2, 57);
+        ctx.restore();
+        ctx.textBaseline = "alphabetic";
+      }
+
+      // Kausale Kraftübertragung direkt im Zwischenraum (Vorschlag B)
+      const gapStart = x1 + r + 5;
+      const gapEnd = x2 - r - 5;
+      const midX = (gapStart + gapEnd) / 2;
+      const pushRight = shift1 >= 0;
+      const forceAlpha = Math.max(0, Math.min(1, (absShift - 0.08) / 0.30)) * Math.max(0, (coupling - 0.28) / 0.72);
+
+      if (coupling <= 0.28) {
+        ctx.save();
+        ctx.fillStyle = pal.muted;
+        ctx.textAlign = "center";
+        ctx.font = `600 11px ${CANVAS_FONT}`;
+        ctx.fillText("Abstand zu groß", midX, cy - 22);
+        ctx.fillText("→ keine Induktion", midX, cy - 6);
+
+        // Gestrichelter Annäherungspfeil rechts an Teilchen 1
+        const arrX1 = midX - 24;
+        const arrX2 = midX + 24;
+        ctx.strokeStyle = pal.primary;
+        ctx.lineWidth = 2;
+        ctx.setLineDash([4, 3]);
+        ctx.beginPath();
+        ctx.moveTo(arrX1, cy + 16);
+        ctx.lineTo(arrX2, cy + 16);
+        ctx.stroke();
+        ctx.setLineDash([]);
+        ctx.beginPath();
+        ctx.moveTo(arrX2, cy + 16);
+        ctx.lineTo(arrX2 - 7, cy + 11.5);
+        ctx.lineTo(arrX2 - 7, cy + 20.5);
+        ctx.closePath();
+        ctx.fillStyle = pal.primary;
+        ctx.fill();
+        ctx.font = `600 10.5px ${CANVAS_FONT}`;
+        ctx.fillText("annähern", midX, cy + 34);
+        ctx.restore();
+      } else if (forceAlpha > 0.02) {
+        const forceColor = pushRight ? pal.deltaMinus : pal.deltaPlus;
+        const dirSign = pushRight ? 1 : -1;
+        const aLeft = gapStart + 10;
+        const aRight = gapEnd - 10;
+
+        ctx.save();
+        ctx.globalAlpha = forceAlpha;
+
+        // 2 sanft wandernde Feldwellen-Bögen vom Auslöser-Pol in Richtung Teilchen 2
+        const waveCycle = ((phase1 * 0.9) % 1 + 1) % 1;
+        [0, 0.5].forEach((offset) => {
+          const prog = (waveCycle + offset) % 1;
+          const arcX = pushRight
+            ? (gapStart + prog * (gapEnd - gapStart - 8))
+            : (gapEnd - prog * (gapEnd - gapStart - 8));
+          ctx.save();
+          ctx.globalAlpha = forceAlpha * (1 - prog) * 0.65;
+          ctx.strokeStyle = forceColor;
+          ctx.lineWidth = 1.6;
+          ctx.beginPath();
+          ctx.arc(
+            arcX - dirSign * 14,
+            cy,
+            24,
+            pushRight ? -0.62 : Math.PI - 0.62,
+            pushRight ? 0.62 : Math.PI + 0.62
+          );
+          ctx.stroke();
+          ctx.restore();
+        });
+
+        // 3 horizontale Kraftpfeile direkt im Zwischenraum
+        ctx.strokeStyle = forceColor;
+        ctx.fillStyle = forceColor;
+        ctx.lineWidth = 2.2;
+        [-18, 0, 18].forEach((dy) => {
+          const yLine = cy + dy;
+          const sX = pushRight ? aLeft : aRight;
+          const eX = pushRight ? aRight : aLeft;
+          ctx.beginPath();
+          ctx.moveTo(sX, yLine);
+          ctx.lineTo(eX, yLine);
+          ctx.stroke();
+
+          ctx.beginPath();
+          ctx.moveTo(eX, yLine);
+          ctx.lineTo(eX - dirSign * 8, yLine - 4.2);
+          ctx.lineTo(eX - dirSign * 8, yLine + 4.2);
+          ctx.closePath();
+          ctx.fill();
+        });
+
+        // Kompaktes Pill-Badge über dem Spalt
+        const forcePill = pushRight ? "δ⁻ stößt Nachbar-e⁻ ab →" : "← δ⁺ zieht Nachbar-e⁻ an";
+        ctx.font = `700 11px ${CANVAS_FONT}`;
+        const fpW = Math.ceil(ctx.measureText(forcePill).width + 20);
+        drawRoundedRect(ctx, midX - fpW / 2, 46, fpW, 22, 999);
+        ctx.fillStyle = pal.surface;
+        ctx.fill();
+        ctx.strokeStyle = forceColor;
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+        ctx.fillStyle = forceColor;
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillText(forcePill, midX, 57);
+        ctx.restore();
+        ctx.textBaseline = "alphabetic";
+      }
+
+      // Rollen-Beschriftungen unter den Kugeln (Ursache vs. Wirkung)
+      ctx.textAlign = "center";
+      ctx.font = `700 11.5px ${CANVAS_FONT}`;
+      ctx.fillStyle = pal.ink;
+      ctx.fillText("1. Auslöser (Ursache)", x1, 204);
+      ctx.fillStyle = coupling > 0.28 ? pal.teal : pal.muted;
+      ctx.fillText("2. Nachbarteilchen (Wirkung)", x2, 204);
+
+      ctx.font = `500 11px ${CANVAS_FONT}`;
+      ctx.fillStyle = pal.muted;
+      ctx.fillText("Spontaner temporärer Dipol", x1, 220);
+      ctx.fillText(
+        coupling > 0.28 ? "Induzierter temporärer Dipol (verzögert)" : "Ohne Nähe: im Zeitmittel unpolar",
+        x2,
+        220
+      );
+
+      // Obere Statuszeile & Fußzeile
       ctx.fillStyle = pal.ink;
       ctx.font = `700 11.5px ${CANVAS_FONT}`;
       ctx.fillText(
-        absShift < 0.08
-          ? "Ladung verteilt sich neu – Induktionsrichtung kehrt sich um"
+        coupling <= 0.28
+          ? "Großer Abstand: Teilchen 1 fluktuiert allein – Teilchen 2 bleibt im Zeitmittel unpolar"
+          : absShift < 0.08
+          ? "Ladung in Teilchen 1 kehrt um – Teilchen 2 folgt mit kurzer Verzögerung"
           : pushRight
-          ? "δ⁻ stößt Elektronen im Nachbarn nach rechts ab (gleiche Ladung)"
-          : "δ⁺ zieht Elektronen im Nachbarn nach links an (gegensätzliche Ladung)",
+          ? "Ursache → Wirkung: δ⁻ (rechts an Teilchen 1) stößt Elektronen im Nachbarn nach rechts ab"
+          : "Ursache → Wirkung: δ⁺ (rechts an Teilchen 1) zieht Elektronen im Nachbarn nach links an",
         w / 2,
-        28
+        24
       );
+
+      ctx.fillStyle = pal.muted;
+      ctx.font = `500 11px ${CANVAS_FONT}`;
+      ctx.fillText("Tipp: Ziehe Teilchen 1 mit der Maus (oder nutze den Regler), um den Einfluss des Abstands zu testen!", w / 2, 254);
 
       badge.textContent = "Phase 3 · Induktion";
       badge.classList.add("warn");
-      caption.textContent = "Durch Abstoßung (δ⁻ stößt Elektronen weg) bzw. Anziehung (δ⁺ zieht Elektronen an) induziert der erste Dipol laufend einen gleichsinnigen temporären Dipol im Nachbarteilchen.";
+      caption.textContent = "Durch Annäherung zwingt Teilchen 1 (Auslöser) dem zunächst unpolaren Nachbarteilchen eine gleichsinnige Verschiebung der Elektronenwolke auf (induzierter Dipol mit kurzem Nachlauf).";
     } else {
       // Phase 4: Elektrostatische Anziehung = London-WW (continuous sinusoidal glide through 0)
       const effShift = shift;
