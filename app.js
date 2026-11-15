@@ -136,14 +136,14 @@
       },
       {
         id: "s4q2",
-        question: "2. Wovon hängt die Stärke der London-Wechselwirkungen bei unpolaren Molekülen vor allem ab?",
+        question: "2. Wovon hängt die Stärke der London-Wechselwirkungen bei linearen Kohlenwasserstoffen vor allem ab?",
         options: [
-          "Von der Größe der Moleküloberfläche und der Anzahl der Elektronen",
+          "Von der Kettenlänge bzw. der Größe der Moleküloberfläche (Kontaktfläche)",
           "Ausschließlich vom Bindungswinkel im H₂O-Molekül",
           "London-WW sind bei allen Molekülen unabhängig von der Größe exakt gleich stark"
         ],
         correct: 0,
-        explanation: "Je größer die Moleküloberfläche (z. B. längere C-Kette bei Alkanen) und je mehr Elektronen vorhanden sind, desto stärker werden die London-WW."
+        explanation: "Je länger die Kohlenstoffkette, desto größer ist die Moleküloberfläche (Kontaktfläche) zwischen den Molekülen → desto stärker werden die London-WW."
       }
     ],
     step5: [
@@ -160,14 +160,14 @@
       },
       {
         id: "s5q2",
-        question: "2. Warum ist Pentan (C₅H₁₂, Sdp. +36 °C) bei Raumtemperatur (20 °C) flüssig, während Methan (CH₄, −162 °C) gasförmig ist?",
+        question: "2. Warum ist Pentan (C₅H₁₂, Sdp. +36 °C) bei 25 °C flüssig, während Methan (CH₄, −162 °C) gasförmig ist?",
         options: [
-          "Pentan besitzt eine deutlich größere Moleküloberfläche und mehr Elektronen → die London-WW sind viel stärker als bei Methan",
+          "Pentan besitzt eine deutlich längere C-Kette und größere Moleküloberfläche → die London-WW sind viel stärker als bei Methan",
           "Pentan ist ein permanenter Dipol mit fünf O–H-Gruppen",
-          "Methan hat überhaupt keine Elektronen"
+          "Methan ist ein Ionengitter mit extrem hohen Schmelzpunkten"
         ],
         correct: 0,
-        explanation: "Beide Alkane sind unpolar (nur London-WW). Wegen der größeren Kettenlänge/Oberfläche von Pentan sind die London-WW deutlich stärker → Sdp. steigt über 20 °C."
+        explanation: "Beide Alkane sind unpolar (nur London-WW). Wegen der größeren Kettenlänge bzw. Kontaktfläche von Pentan sind die London-WW deutlich stärker → der Siedepunkt steigt über 25 °C."
       }
     ],
     step6: [
@@ -229,7 +229,7 @@
           "Pentan (C₅H₁₂) < Methan (CH₄) < Octan (C₈H₁₈)"
         ],
         correct: 0,
-        explanation: "Mit steigender C-Kettenlänge nehmen Elektronenzahl und Moleküloberfläche zu → die London-WW steigen kontinuierlich von CH₄ zu C₈H₁₈."
+        explanation: "Mit steigender C-Kettenlänge vergrößert sich die Moleküloberfläche (Kontaktfläche) → die London-WW nehmen kontinuierlich zu und die Siedetemperatur steigt."
       },
       {
         id: "s7q5",
@@ -403,7 +403,7 @@
     canvasModel2: { w: 660, h: 310 },
     canvasModel3Lupe: { w: 660, h: 250 },
     canvasModel4London: { w: 660, h: 270 },
-    canvasModel4Alkane: { w: 660, h: 220 },
+    canvasModel4Alkane: { w: 660, h: 270 },
     canvasModel5Boil: { w: 660, h: 210 },
     canvasModel5AlkaneChart: { w: 660, h: 220 },
     canvasModel6: { w: 660, h: 310 }
@@ -1897,42 +1897,235 @@
     ctx.restore();
   }
 
-  function startBoilingAnimation() {
-    if (m3RafId) cancelAnimationFrame(m3RafId);
-    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  /* ------------------------------------------------------------------------
+     8. MODELL 4: TEMPORÄRE DIPOLE, INDUKTION & LONDON-WW (KLASSE 10)
+     ------------------------------------------------------------------------ */
+  const ALKANES_DATA = [
+    { key: "c1", carbons: 1, name: "Methan", formula: "CH₄", mp: -182, bp: -162, pct: 10 },
+    { key: "c2", carbons: 2, name: "Ethan", formula: "C₂H₆", mp: -183, bp: -89, pct: 18 },
+    { key: "c3", carbons: 3, name: "Propan", formula: "C₃H₈", mp: -188, bp: -42, pct: 26 },
+    { key: "c4", carbons: 4, name: "Butan", formula: "C₄H₁₀", mp: -138, bp: -0.5, pct: 34 },
+    { key: "c5", carbons: 5, name: "Pentan", formula: "C₅H₁₂", mp: -130, bp: 36, pct: 42 },
+    { key: "c6", carbons: 6, name: "Hexan", formula: "C₆H₁₄", mp: -95, bp: 69, pct: 49 },
+    { key: "c7", carbons: 7, name: "Heptan", formula: "C₇H₁₆", mp: -91, bp: 98, pct: 56 },
+    { key: "c8", carbons: 8, name: "Octan", formula: "C₈H₁₈", mp: -57, bp: 126, pct: 63 },
+    { key: "c9", carbons: 9, name: "Nonan", formula: "C₉H₂₀", mp: -54, bp: 151, pct: 70 },
+    { key: "c10", carbons: 10, name: "Decan", formula: "C₁₀H₂₂", mp: -30, bp: 174, pct: 76 },
+    { key: "c11", carbons: 11, name: "Undecan", formula: "C₁₁H₂₄", mp: -26, bp: 196, pct: 82 },
+    { key: "c12", carbons: 12, name: "Dodecan", formula: "C₁₂H₂₆", mp: -10, bp: 216, pct: 88 },
+    { key: "c13", carbons: 13, name: "Tridecan", formula: "C₁₃H₂₈", mp: -5, bp: 235, pct: 94 },
+    { key: "c14", carbons: 14, name: "Tetradecan", formula: "C₁₄H₃₀", mp: 6, bp: 254, pct: 100 }
+  ];
 
-    function tick() {
-      if (state.activeStep === "step3" && !reduced) {
-        const T = state.m3.tempC;
-        BOILING_SUBSTANCES.forEach((sub, idx) => {
-          const boiling = T >= sub.bp;
-          const speedScale = boiling ? 1.8 : 0.45;
-          state.m3.particles[idx].forEach((p) => {
-            p.x += p.vx * speedScale;
-            p.y += p.vy * speedScale;
-            if (p.x < 0.16 || p.x > 0.84) p.vx *= -1;
-            if (boiling) {
-              if (p.y < 0.14 || p.y > 0.88) p.vy *= -1;
-            } else {
-              if (p.y < 0.56 || p.y > 0.88) p.vy *= -1;
-            }
-          });
-        });
-        drawModel3Boil();
-      }
-      if (!reduced) {
-        m3RafId = requestAnimationFrame(tick);
-      }
-    }
-
-    drawModel3Boil();
-    if (!reduced) {
-      m3RafId = requestAnimationFrame(tick);
-    }
+  function fmtTempC(val) {
+    if (val === -0.5) return "−0,5 °C";
+    return val > 0 ? `+${val} °C` : `${String(val).replace("-", "−")} °C`;
   }
 
-  function drawModel3Boil() {
-    const canvas = document.getElementById("canvasModel3Boil");
+  let m4FluctuateRafId = null;
+  let m4ChartHitboxes = [];
+
+  function initModel4() {
+    const phaseBtns = document.querySelectorAll("[data-m4-phase]");
+    const nextPhaseBtn = document.getElementById("m4NextPhaseBtn");
+    const fluctuateBtn = document.getElementById("m4FluctuateBtn");
+    const alkaneBtns = document.querySelectorAll("[data-m4-alkane]");
+    const alkaneCanvas = document.getElementById("canvasModel4Alkane");
+    const transferInput = document.getElementById("m4TransferInput");
+
+    function setPhase(p) {
+      state.m4.phase = p;
+      phaseBtns.forEach((b) => b.classList.toggle("active", parseInt(b.dataset.m4Phase, 10) === p));
+      state.m4.shiftPct = p === 0 ? 0 : 82;
+      drawModel4London();
+    }
+
+    function setSelectedAlkane(key) {
+      state.m4.alkane = key;
+      alkaneBtns.forEach((b) => b.classList.toggle("active", b.dataset.m4Alkane === key));
+      drawModel4Alkane();
+    }
+
+    phaseBtns.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        if (state.m4.fluctuateOn) toggleFluctuation(false);
+        setPhase(parseInt(btn.dataset.m4Phase, 10));
+      });
+    });
+
+    if (nextPhaseBtn) {
+      nextPhaseBtn.addEventListener("click", () => {
+        if (state.m4.fluctuateOn) toggleFluctuation(false);
+        setPhase((state.m4.phase + 1) % 4);
+      });
+    }
+
+    function toggleFluctuation(forceState) {
+      state.m4.fluctuateOn = typeof forceState === "boolean" ? forceState : !state.m4.fluctuateOn;
+      if (fluctuateBtn) {
+        fluctuateBtn.setAttribute("aria-pressed", String(state.m4.fluctuateOn));
+        fluctuateBtn.textContent = state.m4.fluctuateOn ? "⚡ Fluktuation: An" : "⚡ Fluktuation animieren";
+      }
+      if (m4FluctuateRafId) {
+        cancelAnimationFrame(m4FluctuateRafId);
+        m4FluctuateRafId = null;
+      }
+      if (state.m4.fluctuateOn) {
+        if (state.m4.phase === 0) {
+          state.m4.phase = 1;
+          phaseBtns.forEach((b) => b.classList.toggle("active", parseInt(b.dataset.m4Phase, 10) === 1));
+        }
+        const tick = () => {
+          if (!state.m4.fluctuateOn) return;
+          if (state.activeStep === "step4") {
+            state.m4.fluctuatePhase += 0.045;
+            state.m4.shiftPct = Math.round(50 + 45 * Math.sin(state.m4.fluctuatePhase));
+            drawModel4London();
+          }
+          m4FluctuateRafId = requestAnimationFrame(tick);
+        };
+        m4FluctuateRafId = requestAnimationFrame(tick);
+      } else {
+        drawModel4London();
+      }
+    }
+
+    if (fluctuateBtn) {
+      fluctuateBtn.addEventListener("click", () => toggleFluctuation());
+    }
+
+    alkaneBtns.forEach((btn) => {
+      btn.addEventListener("click", () => setSelectedAlkane(btn.dataset.m4Alkane));
+    });
+
+    if (alkaneCanvas) {
+      alkaneCanvas.addEventListener("click", (e) => {
+        const rect = alkaneCanvas.getBoundingClientRect();
+        const x = ((e.clientX - rect.left) / rect.width) * 660;
+        const hit = m4ChartHitboxes.find((box) => x >= box.x - 3 && x <= box.x + box.w + 3);
+        if (hit) setSelectedAlkane(hit.key);
+      });
+    }
+
+    // Worksheet transfer free-text evaluation (4 core concepts)
+    function evaluateTransferText(text) {
+      const chips = document.querySelectorAll("#m4KeywordChips .keyword-chip");
+      const scoreEl = document.getElementById("m4TransferScore");
+      const rules = {
+        chain: /(kette|läng|c-atom|anzahl|kohlenstoff|ch4|pentan|octan|decan|tetradecan|molekülgröße|alkan|kw)/i,
+        surface: /(oberfläche|kontakt|berühr|fläch)/i,
+        london: /(london|temporär|induziert|wechselwirkung|anziehung|ww)/i,
+        energy: /(siede|schmelz|temperatur|energie|wärme|überwind|trennen|steig|höher)/i
+      };
+      let matched = 0;
+      chips.forEach((chip) => {
+        const kw = chip.dataset.kw;
+        const ok = Boolean(rules[kw] && rules[kw].test(text));
+        chip.classList.toggle("matched", ok);
+        if (ok) matched++;
+      });
+      if (scoreEl) {
+        scoreEl.textContent = `${matched} / 4 Fachbegriffe erkannt`;
+        scoreEl.classList.toggle("done", matched >= 3);
+      }
+    }
+
+    if (transferInput) {
+      transferInput.value = state.m4.transferText || "";
+      evaluateTransferText(transferInput.value);
+      transferInput.addEventListener("input", () => {
+        state.m4.transferText = transferInput.value;
+        saveProgress();
+        evaluateTransferText(transferInput.value);
+      });
+    }
+
+    setPhase(0);
+    setSelectedAlkane(state.m4.alkane || "c5");
+  }
+
+  function drawPolarizableSphere(ctx, cx, cy, r, shiftRatio, pal, isDarkCloud = true) {
+    // shiftRatio: 0 = symmetric; +1 = electrons shifted right (δ⁺ left, δ⁻ right)
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(cx, cy, r, 0, Math.PI * 2);
+    if (Math.abs(shiftRatio) < 0.08) {
+      const grad = ctx.createRadialGradient(cx, cy, r * 0.12, cx, cy, r);
+      grad.addColorStop(0, pal.dark ? "rgba(56, 189, 248, 0.55)" : "rgba(15, 23, 42, 0.35)");
+      grad.addColorStop(1, pal.dark ? "rgba(148, 163, 184, 0.18)" : "rgba(100, 116, 139, 0.14)");
+      ctx.fillStyle = grad;
+    } else {
+      const dir = shiftRatio >= 0 ? 1 : -1;
+      const strength = Math.min(1, Math.abs(shiftRatio));
+      const xStart = cx - dir * r;
+      const xEnd = cx + dir * r;
+      const grad = ctx.createLinearGradient(xStart, cy, xEnd, cy);
+      grad.addColorStop(0, pal.dark ? `rgba(248, 113, 113, ${0.18 + 0.25 * strength})` : `rgba(220, 38, 38, ${0.10 + 0.18 * strength})`);
+      grad.addColorStop(0.45, pal.dark ? "rgba(148, 163, 184, 0.22)" : "rgba(226, 232, 240, 0.55)");
+      grad.addColorStop(1, pal.dark ? `rgba(56, 189, 248, ${0.38 + 0.42 * strength})` : `rgba(2, 132, 199, ${0.34 + 0.46 * strength})`);
+      ctx.fillStyle = grad;
+    }
+    ctx.fill();
+    ctx.strokeStyle = isDarkCloud ? pal.primary : pal.border;
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    // Nucleus (+)
+    ctx.beginPath();
+    ctx.arc(cx, cy, 9, 0, Math.PI * 2);
+    ctx.fillStyle = pal.surface;
+    ctx.fill();
+    ctx.strokeStyle = pal.ink;
+    ctx.lineWidth = 1.6;
+    ctx.stroke();
+    ctx.fillStyle = pal.ink;
+    ctx.font = `800 12px ${CANVAS_FONT}`;
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillText("+", cx, cy + 0.5);
+
+    // Electron dots (6 dots) shifting cleanly according to shiftRatio
+    const baseOffsets = [
+      { x: -24, y: -16 },
+      { x: -28, y: 12 },
+      { x: -10, y: 26 },
+      { x: 10, y: -26 },
+      { x: 24, y: -12 },
+      { x: 22, y: 18 }
+    ];
+    baseOffsets.forEach((off, idx) => {
+      const shiftX = shiftRatio * (r * 0.44);
+      let px = cx + off.x + shiftX;
+      let py = cy + off.y * (1 - Math.abs(shiftRatio) * 0.15);
+      // Keep inside circle radius - 7
+      const dist = Math.hypot(px - cx, py - cy);
+      if (dist > r - 8) {
+        const sc = (r - 8) / dist;
+        px = cx + (px - cx) * sc;
+        py = cy + (py - cy) * sc;
+      }
+      ctx.beginPath();
+      ctx.arc(px, py, 3.2, 0, Math.PI * 2);
+      ctx.fillStyle = idx < 3 && Math.abs(shiftRatio) < 0.08 ? pal.ink : pal.primary;
+      ctx.fill();
+    });
+
+    // Delta labels if polarized
+    if (Math.abs(shiftRatio) >= 0.2) {
+      const plusX = cx - Math.sign(shiftRatio) * (r * 0.54);
+      const minusX = cx + Math.sign(shiftRatio) * (r * 0.54);
+      ctx.font = `800 16px ${CANVAS_FONT}`;
+      ctx.fillStyle = pal.deltaPlus;
+      ctx.fillText("δ⁺", plusX, cy - r * 0.36);
+      ctx.fillStyle = pal.deltaMinus;
+      ctx.fillText("δ⁻", minusX, cy - r * 0.36);
+    }
+
+    ctx.restore();
+  }
+
+  function drawModel4London() {
+    const canvas = document.getElementById("canvasModel4London");
     if (!canvas) return;
     const { ctx, w, h } = setupHiDPICanvas(canvas);
     const pal = getPalette();
@@ -1940,15 +2133,624 @@
     ctx.fillStyle = pal.bg;
     ctx.fillRect(0, 0, w, h);
 
-    const T = state.m3.tempC;
-    const boxW = 264;
-    const gap = 36;
+    const p = state.m4.phase;
+    const shift = state.m4.fluctuateOn
+      ? Math.sin(state.m4.fluctuatePhase) * 0.95
+      : state.m4.shiftPct / 100;
+
+    const badge = document.getElementById("m4LondonBadge");
+    const caption = document.getElementById("m4LondonCaption");
+    badge.classList.remove("ok", "warn");
+
+    if (p === 0) {
+      // Phase 1: Symmetrische Ladungsdichte
+      drawPolarizableSphere(ctx, w / 2, 130, 58, 0, pal);
+
+      ctx.fillStyle = pal.muted;
+      ctx.font = `600 11.5px ${CANVAS_FONT}`;
+      ctx.textAlign = "right";
+      ctx.fillText("Atomkern (+)", w / 2 - 74, 108);
+      ctx.beginPath();
+      ctx.moveTo(w / 2 - 68, 108);
+      ctx.lineTo(w / 2 - 12, 128);
+      ctx.strokeStyle = pal.muted;
+      ctx.lineWidth = 1.4;
+      ctx.stroke();
+
+      ctx.textAlign = "left";
+      ctx.fillText("Elektronenhülle", w / 2 + 74, 104);
+      ctx.fillText("(symmetrische Ladungsdichte)", w / 2 + 74, 120);
+      ctx.beginPath();
+      ctx.moveTo(w / 2 + 68, 108);
+      ctx.lineTo(w / 2 + 44, 122);
+      ctx.stroke();
+
+      // Bottom summary box
+      ctx.fillStyle = pal.surface;
+      drawRoundedRect(ctx, 130, h - 48, w - 260, 32, 8);
+      ctx.fill();
+      ctx.strokeStyle = pal.border;
+      ctx.stroke();
+      ctx.fillStyle = pal.ink;
+      ctx.font = `700 12px ${CANVAS_FONT}`;
+      ctx.textAlign = "center";
+      ctx.fillText("Symmetrische Elektronenverteilung → nach außen unpolar", w / 2, h - 28);
+
+      badge.textContent = "Phase 1 · symmetrisch";
+      caption.textContent = "Im zeitlichen Mittel sind die Elektronen symmetrisch um den Atomkern verteilt → keine Teilladungen.";
+    } else if (p === 1) {
+      // Phase 2: Spontaner temporärer Dipol
+      drawPolarizableSphere(ctx, w / 2, 126, 60, shift, pal);
+
+      // Left & right callout boxes matching worksheet
+      const leftMinus = shift < 0;
+      const boxL = { x: 26, y: 78, w: 205, h: 74 };
+      const boxR = { x: w - 231, y: 78, w: 205, h: 74 };
+
+      [
+        { b: boxL, isMinus: leftMinus },
+        { b: boxR, isMinus: !leftMinus }
+      ].forEach(({ b, isMinus }) => {
+        ctx.fillStyle = pal.surface;
+        drawRoundedRect(ctx, b.x, b.y, b.w, b.h, 8);
+        ctx.fill();
+        ctx.strokeStyle = isMinus ? pal.deltaMinus : pal.deltaPlus;
+        ctx.lineWidth = 1.8;
+        ctx.stroke();
+
+        ctx.textAlign = "center";
+        ctx.font = `700 11.5px ${CANVAS_FONT}`;
+        ctx.fillStyle = isMinus ? pal.deltaMinus : pal.deltaPlus;
+        ctx.fillText(isMinus ? "Mehr Elektronen (δ⁻)" : "Weniger Elektronen (δ⁺)", b.x + b.w / 2, b.y + 24);
+        ctx.fillStyle = pal.muted;
+        ctx.font = `500 11px ${CANVAS_FONT}`;
+        ctx.fillText(isMinus ? "daher partiell negativ geladen" : "daher partiell positiv geladen", b.x + b.w / 2, b.y + 44);
+        ctx.fillText("vorübergehend (temporär)", b.x + b.w / 2, b.y + 60);
+      });
+
+      ctx.fillStyle = pal.primary;
+      ctx.font = `700 12.5px ${CANVAS_FONT}`;
+      ctx.textAlign = "center";
+      ctx.fillText("Temporärer Dipol (entsteht spontan durch Elektronenbewegung)", w / 2, h - 22);
+
+      badge.textContent = "Phase 2 · Temporärer Dipol";
+      badge.classList.add("warn");
+      caption.textContent = "Durch spontane Bewegung verteilen sich die Elektronen kurzzeitig ungleich → ein temporärer Dipol entsteht.";
+    } else if (p === 2) {
+      // Phase 3: Annäherung & Induktion
+      const effShift = Math.max(0.45, Math.abs(shift)) * (shift < 0 ? -1 : 1);
+      const x1 = 215;
+      const x2 = 445;
+      const cy = 140;
+
+      drawPolarizableSphere(ctx, x1, cy, 52, effShift, pal);
+      drawPolarizableSphere(ctx, x2, cy, 52, effShift * 0.92, pal);
+
+      // Labels under spheres
+      ctx.font = `700 11.5px ${CANVAS_FONT}`;
+      ctx.textAlign = "center";
+      ctx.fillStyle = pal.ink;
+      ctx.fillText("1. Temporärer Dipol", x1, cy + 72);
+      ctx.fillStyle = pal.teal;
+      ctx.fillText("2. Induzierter temporärer Dipol", x2, cy + 72);
+
+      // Repulsion push arrow
+      ctx.strokeStyle = pal.deltaMinus;
+      ctx.lineWidth = 2.4;
+      ctx.beginPath();
+      ctx.moveTo(x1 + 42, 62);
+      ctx.quadraticCurveTo(w / 2, 42, x2 + 34, 62);
+      ctx.stroke();
+      // Arrowhead right
+      ctx.beginPath();
+      ctx.moveTo(x2 + 34, 62);
+      ctx.lineTo(x2 + 23, 55);
+      ctx.lineTo(x2 + 25, 68);
+      ctx.closePath();
+      ctx.fillStyle = pal.deltaMinus;
+      ctx.fill();
+
+      ctx.fillStyle = pal.ink;
+      ctx.font = `700 11.5px ${CANVAS_FONT}`;
+      ctx.fillText(
+        effShift >= 0
+          ? "δ⁻ schiebt Elektronen im Nachbarn nach rechts (Abstoßung gleicher Ladung)"
+          : "δ⁺ zieht Elektronen im Nachbarn nach links",
+        w / 2,
+        28
+      );
+
+      badge.textContent = "Phase 3 · Induktion";
+      badge.classList.add("warn");
+      caption.textContent = "Der negativ geladene Pol (δ⁻) des ersten Dipols stößt die Elektronen des Nachbarteilchens ab und induziert dort einen zweiten temporären Dipol.";
+    } else {
+      // Phase 4: Elektrostatische Anziehung = London-WW
+      const effShift = Math.max(0.55, Math.abs(shift)) * (shift < 0 ? -1 : 1);
+      const x1 = 248;
+      const x2 = 412;
+      const cy = 142;
+
+      drawPolarizableSphere(ctx, x1, cy, 52, effShift, pal);
+      drawPolarizableSphere(ctx, x2, cy, 52, effShift, pal);
+
+      // Dotted electrostatic attraction lines between x1+52 and x2-52
+      ctx.save();
+      ctx.strokeStyle = pal.warn;
+      ctx.lineWidth = 3;
+      ctx.setLineDash([4, 4]);
+      [-18, 0, 18].forEach((dy) => {
+        ctx.beginPath();
+        ctx.moveTo(x1 + 54, cy + dy);
+        ctx.lineTo(x2 - 54, cy + dy);
+        ctx.stroke();
+      });
+      ctx.restore();
+
+      // Attraction badge above
+      drawRoundedRect(ctx, w / 2 - 140, 22, 280, 32, 999);
+      ctx.fillStyle = pal.surface;
+      ctx.fill();
+      ctx.strokeStyle = pal.warn;
+      ctx.lineWidth = 2;
+      ctx.stroke();
+      ctx.fillStyle = pal.warn;
+      ctx.font = `800 12.5px ${CANVAS_FONT}`;
+      ctx.textAlign = "center";
+      ctx.fillText("⚡ London-WW: δ⁻ ··· δ⁺ Anziehung!", w / 2, 42);
+
+      // Bottom explanation
+      ctx.fillStyle = pal.ink;
+      ctx.font = `700 11.5px ${CANVAS_FONT}`;
+      ctx.fillText("Kurzfristige elektrostatische Anziehung zwischen temporären Dipolen", w / 2, h - 22);
+
+      badge.textContent = "Phase 4 · London-WW aktiv";
+      badge.classList.add("ok");
+      caption.textContent = "Zwischen dem δ⁻-Bereich links und dem induzierten δ⁺-Bereich rechts entsteht kurzzeitig eine elektrostatische Anziehung: eine London-Wechselwirkung!";
+    }
+  }
+
+  // Shared C1-C14 Melting & Boiling Point Bar Chart Renderer
+  function drawAlkaneChartCore(ctx, rect, opts, pal) {
+    const { x, y, w, h } = rect;
+    const padL = opts.padL || 42;
+    const padR = opts.padR || 10;
+    const padT = opts.padT || 16;
+    const padB = opts.padB || 34;
+    const plotW = w - padL - padR;
+    const plotH = h - padT - padB;
+    const plotX = x + padL;
+    const plotY = y + padT;
+    const minT = -250;
+    const maxT = 300;
+    const yForTemp = (t) => plotY + plotH * (1 - (t - minT) / (maxT - minT));
+    const mpColor = pal.dark ? "#3b82f6" : "#1d4ed8";
+    const bpColor = pal.dark ? "#fb7185" : "#e11d48";
+    const ref25Color = pal.dark ? "#93c5fd" : "#3b82f6";
+
+    // Plot background & frame
+    ctx.fillStyle = pal.surface;
+    drawRoundedRect(ctx, plotX, plotY, plotW, plotH, 4);
+    ctx.fill();
+    ctx.strokeStyle = pal.border;
+    ctx.lineWidth = 1;
+    ctx.stroke();
+
+    // Horizontal gridlines (-200, -100, 0, 100, 200, 300)
+    [-200, -100, 0, 100, 200, 300].forEach((gridT) => {
+      const gy = yForTemp(gridT);
+      ctx.strokeStyle = gridT === 0
+        ? pal.border
+        : (pal.dark ? "rgba(148, 163, 184, 0.16)" : "rgba(100, 116, 139, 0.16)");
+      ctx.lineWidth = gridT === 0 ? 1.2 : 0.8;
+      ctx.beginPath();
+      ctx.moveTo(plotX, gy);
+      ctx.lineTo(plotX + plotW, gy);
+      ctx.stroke();
+
+      ctx.fillStyle = pal.muted;
+      ctx.font = `600 9.5px ${CANVAS_MONO}`;
+      ctx.textAlign = "right";
+      ctx.textBaseline = "middle";
+      ctx.fillText(String(gridT).replace("-", "−"), plotX - 5, gy);
+    });
+
+    // Y-axis title
+    ctx.save();
+    ctx.translate(x + 11, plotY + plotH / 2);
+    ctx.rotate(-Math.PI / 2);
+    ctx.fillStyle = pal.muted;
+    ctx.font = `700 9.5px ${CANVAS_FONT}`;
+    ctx.textAlign = "center";
+    ctx.fillText("Temperatur (°C)", 0, 0);
+    ctx.restore();
+
+    // Bars (C1..C14)
+    const slotW = plotW / ALKANES_DATA.length;
+    const barGap = Math.max(1, slotW * 0.05);
+    const barW = Math.max(4, Math.min(16, (slotW - barGap * 3) / 2.25));
+    const hitboxes = [];
+    const byBot = plotY + plotH;
+
+    ALKANES_DATA.forEach((alk, idx) => {
+      const gx = plotX + idx * slotW;
+      const isSelected = alk.key === opts.selectedKey;
+      hitboxes.push({ key: alk.key, x: gx, w: slotW });
+
+      if (isSelected) {
+        ctx.fillStyle = pal.dark ? "rgba(56, 189, 248, 0.14)" : "rgba(2, 132, 199, 0.10)";
+        ctx.fillRect(gx + 1, plotY + 1, slotW - 2, plotH - 2);
+      }
+
+      const centerGroupX = gx + slotW / 2;
+      const mpX = centerGroupX - barW - barGap * 0.5;
+      const bpX = centerGroupX + barGap * 0.5;
+      const mpTop = Math.min(byBot - 3, yForTemp(alk.mp));
+      const bpTop = Math.min(byBot - 3, yForTemp(alk.bp));
+
+      // Melting point bar (blue)
+      ctx.fillStyle = mpColor;
+      ctx.fillRect(mpX, mpTop, barW, byBot - mpTop);
+
+      // Boiling point bar (red/coral)
+      ctx.fillStyle = bpColor;
+      ctx.fillRect(bpX, bpTop, barW, byBot - bpTop);
+
+      if (isSelected) {
+        ctx.strokeStyle = pal.ink;
+        ctx.lineWidth = 1.4;
+        ctx.strokeRect(mpX - 1.5, Math.min(mpTop, bpTop) - 1.5, barW * 2 + barGap + 3, byBot - Math.min(mpTop, bpTop) + 1.5);
+      }
+
+      // X-axis label (1..14)
+      ctx.textAlign = "center";
+      ctx.textBaseline = "top";
+      ctx.fillStyle = isSelected ? pal.primary : pal.ink;
+      ctx.font = `${isSelected ? "800" : "600"} 9.5px ${CANVAS_FONT}`;
+      ctx.fillText(String(alk.carbons), centerGroupX, byBot + 5);
+    });
+
+    // X-axis caption
+    ctx.fillStyle = pal.ink;
+    ctx.font = `700 10px ${CANVAS_FONT}`;
+    ctx.textAlign = "center";
+    ctx.textBaseline = "bottom";
+    ctx.fillText("Anzahl C-Atome (lineare Kohlenwasserstoffe)", plotX + plotW / 2, y + h - 2);
+
+    // 25 °C reference line
+    const y25 = yForTemp(25);
+    ctx.save();
+    ctx.strokeStyle = ref25Color;
+    ctx.lineWidth = 1.4;
+    ctx.beginPath();
+    ctx.moveTo(plotX, y25);
+    ctx.lineTo(plotX + plotW, y25);
+    ctx.stroke();
+
+    const show25Text = typeof opts.heaterTemp !== "number" || Math.abs(opts.heaterTemp - 25) >= 22;
+    if (show25Text) {
+      ctx.fillStyle = ref25Color;
+      ctx.font = `800 10px ${CANVAS_FONT}`;
+      ctx.textAlign = "left";
+      ctx.textBaseline = "bottom";
+      ctx.fillText("25 °C", plotX + 8, y25 - 3);
+    }
+    ctx.restore();
+
+    // Optional heater temperature overlay line (Step 5)
+    if (typeof opts.heaterTemp === "number") {
+      const clampedT = Math.max(minT, Math.min(maxT, opts.heaterTemp));
+      const yHeat = yForTemp(clampedT);
+      const labelTxt = `Heizplatte T = ${opts.heaterTemp} °C`;
+      ctx.save();
+      ctx.strokeStyle = pal.warn;
+      ctx.lineWidth = 1.8;
+      ctx.setLineDash([5, 4]);
+      ctx.beginPath();
+      ctx.moveTo(plotX, yHeat);
+      ctx.lineTo(plotX + plotW, yHeat);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      ctx.font = `800 10px ${CANVAS_FONT}`;
+      const pillW = ctx.measureText(labelTxt).width + 14;
+      const pillH = 17;
+      // Place badge in open left area when above C1-C3 boiling points, else right, always with opaque pill backdrop
+      const placeLeft = opts.heaterTemp > -85 && opts.heaterTemp < 65;
+      const pillX = placeLeft ? plotX + 8 : plotX + plotW - pillW - 8;
+      const pillY = yHeat - pillH - 3 >= plotY + 2 ? yHeat - pillH - 3 : yHeat + 4;
+
+      ctx.fillStyle = pal.surface;
+      drawRoundedRect(ctx, pillX, pillY, pillW, pillH, 999);
+      ctx.fill();
+      ctx.strokeStyle = pal.warn;
+      ctx.lineWidth = 1.2;
+      ctx.stroke();
+
+      ctx.fillStyle = pal.warn;
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText(labelTxt, pillX + pillW / 2, pillY + pillH / 2 + 0.5);
+      ctx.restore();
+    }
+
+    // Legend inside open upper-left plot area (above C1-C6 bars)
+    const legX = plotX + 14;
+    const legY = plotY + 12;
+    ctx.textAlign = "left";
+    ctx.textBaseline = "middle";
+    ctx.font = `700 10.5px ${CANVAS_FONT}`;
+
+    ctx.fillStyle = mpColor;
+    ctx.fillRect(legX, legY, 9, 9);
+    ctx.fillText("Schmelzpunkt", legX + 13, legY + 5);
+
+    ctx.fillStyle = bpColor;
+    ctx.fillRect(legX, legY + 16, 9, 9);
+    ctx.fillText("Siedepunkt", legX + 13, legY + 21);
+
+    return hitboxes;
+  }
+
+  function drawModel4Alkane() {
+    const canvas = document.getElementById("canvasModel4Alkane");
+    if (!canvas) return;
+    const { ctx, w, h } = setupHiDPICanvas(canvas);
+    const pal = getPalette();
+
+    ctx.fillStyle = pal.bg;
+    ctx.fillRect(0, 0, w, h);
+
+    const data = ALKANES_DATA.find((a) => a.key === state.m4.alkane) || ALKANES_DATA[4];
+    const badge = document.getElementById("m4AlkaneBadge");
+    const caption = document.getElementById("m4AlkaneCaption");
+    if (badge) badge.textContent = `${data.formula} (${data.name}) · Sdp. ${fmtTempC(data.bp)}`;
+
+    // Left panel: C1-C14 Melting & Boiling Point Chart
+    m4ChartHitboxes = drawAlkaneChartCore(
+      ctx,
+      { x: 6, y: 10, w: 382, h: h - 18 },
+      { selectedKey: data.key, padL: 42, padR: 8, padT: 12, padB: 32 },
+      pal
+    );
+
+    // Right info card: Selected Alkane Contact Surface & Physical Data
+    const cardX = 398, cardY = 12, cardW = w - 410, cardH = h - 24;
+    ctx.fillStyle = pal.surface;
+    drawRoundedRect(ctx, cardX, cardY, cardW, cardH, 10);
+    ctx.fill();
+    ctx.strokeStyle = pal.border;
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+
+    ctx.textAlign = "left";
+    ctx.textBaseline = "alphabetic";
+    ctx.fillStyle = pal.ink;
+    ctx.font = `800 13.5px ${CANVAS_FONT}`;
+    ctx.fillText(`${data.name} (${data.formula})`, cardX + 14, cardY + 24);
+
+    // Clear subtitle with C count, MP / BP & State at 25 °C
+    ctx.font = `600 11px ${CANVAS_FONT}`;
+    ctx.fillStyle = pal.muted;
+    ctx.fillText(`${data.carbons} C-Atom${data.carbons === 1 ? "" : "e"} · Smp. ${fmtTempC(data.mp)} · Sdp. ${fmtTempC(data.bp)}`, cardX + 14, cardY + 43);
+
+    const aggState = data.bp < 25 ? "Gasförmig" : data.mp >= 25 ? "Fest" : "Flüssig";
+    ctx.fillStyle = data.bp < 25 ? pal.warn : pal.primary;
+    ctx.font = `700 11.5px ${CANVAS_FONT}`;
+    ctx.fillText(`Bei 25 °C: ${aggState}`, cardX + 14, cardY + 62);
+
+    // Two parallel alkane chains showing contact surface & London-WW
+    const nC = data.carbons;
+    const molCenterX = cardX + cardW / 2;
+    const topY = cardY + 104;
+    const botY = cardY + 158;
+    const maxSpan = cardW - 60;
+    const stepX = nC === 1 ? 0 : Math.min(24, maxSpan / (nC - 1));
+    const totalW = Math.max(52, (nC - 1) * stepX + 36);
+    const startC = molCenterX - ((nC - 1) * stepX) / 2;
+    const atomR = nC >= 11 ? 5.2 : nC >= 7 ? 6.2 : 7.5;
+    const zigAmp = nC >= 10 ? 3.5 : 4.5;
+
+    [topY, botY].forEach((cy, mIdx) => {
+      ctx.save();
+      drawRoundedRect(ctx, molCenterX - totalW / 2, cy - 16, totalW, 32, 16);
+      const grad = ctx.createLinearGradient(molCenterX - totalW / 2, cy, molCenterX + totalW / 2, cy);
+      if (mIdx === 0) {
+        grad.addColorStop(0, pal.dark ? "rgba(56, 189, 248, 0.24)" : "rgba(2, 132, 199, 0.15)");
+        grad.addColorStop(0.5, pal.dark ? "rgba(251, 191, 36, 0.26)" : "rgba(245, 158, 11, 0.20)");
+        grad.addColorStop(1, pal.dark ? "rgba(56, 189, 248, 0.24)" : "rgba(2, 132, 199, 0.15)");
+      } else {
+        grad.addColorStop(0, pal.dark ? "rgba(248, 113, 113, 0.22)" : "rgba(220, 38, 38, 0.13)");
+        grad.addColorStop(0.5, pal.dark ? "rgba(56, 189, 248, 0.24)" : "rgba(2, 132, 199, 0.15)");
+        grad.addColorStop(1, pal.dark ? "rgba(248, 113, 113, 0.22)" : "rgba(220, 38, 38, 0.13)");
+      }
+      ctx.fillStyle = grad;
+      ctx.fill();
+      ctx.strokeStyle = pal.border;
+      ctx.lineWidth = 1.4;
+      ctx.stroke();
+
+      const pts = Array.from({ length: nC }, (_, i) => ({
+        x: startC + i * stepX,
+        y: cy + (nC === 1 ? 0 : i % 2 === 0 ? zigAmp : -zigAmp)
+      }));
+      if (nC > 1) {
+        ctx.strokeStyle = pal.ink;
+        ctx.lineWidth = nC >= 10 ? 2 : 2.4;
+        ctx.beginPath();
+        pts.forEach((pt, i) => (i === 0 ? ctx.moveTo(pt.x, pt.y) : ctx.lineTo(pt.x, pt.y)));
+        ctx.stroke();
+      }
+      pts.forEach((pt) => {
+        ctx.beginPath();
+        ctx.arc(pt.x, pt.y, atomR, 0, Math.PI * 2);
+        ctx.fillStyle = pal.dark ? "#d97706" : "#f59e0b";
+        ctx.fill();
+        ctx.strokeStyle = "#ffffff";
+        ctx.lineWidth = 1.1;
+        ctx.stroke();
+      });
+      ctx.restore();
+    });
+
+    // London-WW contact lines
+    const linkCount = Math.max(2, Math.min(12, nC));
+    const linkStart = molCenterX - totalW * 0.38;
+    const linkSpan = totalW * 0.76;
+    ctx.save();
+    ctx.strokeStyle = pal.warn;
+    ctx.lineWidth = 2;
+    ctx.setLineDash([3, 3]);
+    for (let i = 0; i < linkCount; i++) {
+      const lx = linkStart + (linkCount === 1 ? 0 : (i / (linkCount - 1)) * linkSpan);
+      ctx.beginPath();
+      ctx.moveTo(lx, topY + 18);
+      ctx.lineTo(lx, botY - 18);
+      ctx.stroke();
+    }
+    ctx.restore();
+
+    // Surface / London-WW meter
+    ctx.fillStyle = pal.ink;
+    ctx.font = `700 11px ${CANVAS_FONT}`;
+    ctx.textAlign = "left";
+    ctx.fillText("Kontaktfläche & London-WW:", cardX + 14, cardY + 200);
+
+    const barX = cardX + 14, barY = cardY + 210, barW = cardW - 28, barH = 14;
+    drawRoundedRect(ctx, barX, barY, barW, barH, 7);
+    ctx.fillStyle = pal.surfaceAlt;
+    ctx.fill();
+
+    drawRoundedRect(ctx, barX, barY, Math.max(14, (barW * data.pct) / 100), barH, 7);
+    ctx.fillStyle = data.pct > 55 ? pal.warn : pal.primary;
+    ctx.fill();
+
+    if (caption) {
+      caption.textContent = `${data.name} (${data.formula}): Smp. ${fmtTempC(data.mp)} · Sdp. ${fmtTempC(data.bp)} (bei 25 °C ${aggState.toLowerCase()}). Klicke im Diagramm links auf 1–14 C-Atome!`;
+    }
+  }
+
+  /* ------------------------------------------------------------------------
+     9. MODELL 5: AUSWIRKUNG SIEDETEMPERATUREN (3 WW & LINEARE KW C1–C14)
+     ------------------------------------------------------------------------ */
+  const BOILING_SUBSTANCES = [
+    { id: "ch4", name: "Methan (CH₄)", bp: -162, ww: "London-WW", colorKey: "warn" },
+    { id: "so2", name: "SO₂", bp: -10, ww: "Dipol-Dipol", colorKey: "primary" },
+    { id: "h2o", name: "Wasser (H₂O)", bp: 100, ww: "H-Brücken", colorKey: "deltaMinus" }
+  ];
+
+  let m5RafId = null;
+  let m5ChartHitboxes = [];
+
+  function initModel5() {
+    const tempSlider = document.getElementById("m5TempSlider");
+    const tempPresets = document.querySelectorAll("[data-m5-temp]");
+    const chartCanvas = document.getElementById("canvasModel5AlkaneChart");
+
+    state.m5.particles = BOILING_SUBSTANCES.map(() =>
+      Array.from({ length: 8 }, (_, i) => ({
+        x: 0.18 + (i % 4) * 0.21,
+        y: 0.62 + Math.floor(i / 4) * 0.17,
+        vx: (Math.random() - 0.5) * 0.015,
+        vy: (Math.random() - 0.5) * 0.015
+      }))
+    );
+
+    function setTemp(t) {
+      state.m5.tempC = t;
+      if (tempSlider) {
+        tempSlider.value = String(t);
+        syncSliderVisual(tempSlider);
+        tempSlider.setAttribute("aria-valuetext", `${t} Grad Celsius`);
+      }
+      const valEl = document.getElementById("m5TempVal");
+      const badgeEl = document.getElementById("m5TempBadge");
+      if (valEl) valEl.textContent = `${t} °C`;
+      if (badgeEl) badgeEl.textContent = t === 20 ? "T = 20 °C (Raumtemp.)" : `T = ${t} °C`;
+
+      tempPresets.forEach((b) => {
+        b.classList.toggle("active", parseInt(b.dataset.m5Temp, 10) === t);
+      });
+      drawModel5Boil();
+      drawModel5AlkaneChart();
+    }
+
+    if (tempSlider) {
+      tempSlider.addEventListener("input", () => setTemp(parseInt(tempSlider.value, 10)));
+      syncSliderVisual(tempSlider);
+    }
+
+    tempPresets.forEach((btn) => {
+      btn.addEventListener("click", () => setTemp(parseInt(btn.dataset.m5Temp, 10)));
+    });
+
+    if (chartCanvas) {
+      chartCanvas.addEventListener("click", (e) => {
+        const rect = chartCanvas.getBoundingClientRect();
+        const x = ((e.clientX - rect.left) / rect.width) * 660;
+        const hit = m5ChartHitboxes.find((box) => x >= box.x - 3 && x <= box.x + box.w + 3);
+        if (hit) {
+          state.m5.selectedAlkane = hit.key;
+          drawModel5AlkaneChart();
+        }
+      });
+    }
+
+    startBoilingAnimation();
+    setTemp(20);
+  }
+
+  function startBoilingAnimation() {
+    if (m5RafId) cancelAnimationFrame(m5RafId);
+    const reduced = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    function tick() {
+      if (state.activeStep === "step5" && !reduced) {
+        const T = state.m5.tempC;
+        BOILING_SUBSTANCES.forEach((sub, idx) => {
+          const boiling = T >= sub.bp;
+          const speedScale = boiling ? 1.85 : 0.45;
+          (state.m5.particles[idx] || []).forEach((p) => {
+            p.x += p.vx * speedScale;
+            p.y += p.vy * speedScale;
+            if (p.x < 0.16 || p.x > 0.84) p.vx *= -1;
+            if (boiling) {
+              if (p.y < 0.14 || p.y > 0.88) p.vy *= -1;
+            } else {
+              if (p.y < 0.54 || p.y > 0.88) p.vy *= -1;
+            }
+          });
+        });
+        drawModel5Boil();
+      }
+      if (!reduced) {
+        m5RafId = requestAnimationFrame(tick);
+      }
+    }
+
+    drawModel5Boil();
+    if (!reduced) {
+      m5RafId = requestAnimationFrame(tick);
+    }
+  }
+
+  function drawModel5Boil() {
+    const canvas = document.getElementById("canvasModel5Boil");
+    if (!canvas) return;
+    const { ctx, w, h } = setupHiDPICanvas(canvas);
+    const pal = getPalette();
+
+    ctx.fillStyle = pal.bg;
+    ctx.fillRect(0, 0, w, h);
+
+    const T = state.m5.tempC;
+    const boxW = 188;
+    const gap = 22;
     const startX = (w - (boxW * BOILING_SUBSTANCES.length + gap * (BOILING_SUBSTANCES.length - 1))) / 2;
 
     BOILING_SUBSTANCES.forEach((sub, idx) => {
       const bx = startX + idx * (boxW + gap);
-      const by = 26;
-      const bh = 136;
+      const by = 28;
+      const bh = 148;
       const boiling = T >= sub.bp;
 
       // Beaker outline
@@ -1962,11 +2764,11 @@
       // Liquid body if not boiling
       if (!boiling) {
         ctx.fillStyle = pal.dark ? "rgba(56, 189, 248, 0.14)" : "rgba(2, 132, 199, 0.10)";
-        ctx.fillRect(bx + 2, by + bh * 0.48, boxW - 4, bh * 0.50);
+        ctx.fillRect(bx + 2, by + bh * 0.46, boxW - 4, bh * 0.52);
       }
 
       // WW lines between close liquid particles
-      const pts = (state.m3.particles[idx] || []).map((p) => ({
+      const pts = (state.m5.particles[idx] || []).map((p) => ({
         x: bx + p.x * boxW,
         y: by + p.y * bh
       }));
@@ -1978,7 +2780,7 @@
         ctx.lineWidth = 1.6;
         for (let i = 0; i < pts.length; i++) {
           for (let j = i + 1; j < pts.length; j++) {
-            if (Math.hypot(pts[i].x - pts[j].x, pts[i].y - pts[j].y) < 58) {
+            if (Math.hypot(pts[i].x - pts[j].x, pts[i].y - pts[j].y) < 48) {
               ctx.beginPath();
               ctx.moveTo(pts[i].x, pts[i].y);
               ctx.lineTo(pts[j].x, pts[j].y);
@@ -1989,39 +2791,63 @@
         ctx.restore();
       }
 
-      // Draw particles
+      // Particles
       pts.forEach((pt) => {
         ctx.fillStyle = pal[sub.colorKey];
         ctx.beginPath();
-        ctx.arc(pt.x, pt.y, 7, 0, Math.PI * 2);
+        ctx.arc(pt.x, pt.y, 6.5, 0, Math.PI * 2);
         ctx.fill();
         ctx.strokeStyle = pal.surface;
-        ctx.lineWidth = 1.4;
+        ctx.lineWidth = 1.3;
         ctx.stroke();
       });
 
-      // Labels
+      // Top & Bottom Labels
       ctx.fillStyle = pal.ink;
-      ctx.font = `700 12.5px ${CANVAS_FONT}`;
-      ctx.textAlign = "center";
-      ctx.fillText(`${sub.name} · Sdp. ${sub.bp} °C`, bx + boxW / 2, 17);
-
       ctx.font = `700 11.5px ${CANVAS_FONT}`;
+      ctx.textAlign = "center";
+      ctx.fillText(`${sub.name} · Sdp. ${sub.bp > 0 ? "+" : ""}${sub.bp} °C`, bx + boxW / 2, 18);
+
+      ctx.font = `700 11px ${CANVAS_FONT}`;
       ctx.fillStyle = boiling ? pal.bad : pal.ok;
       ctx.fillText(
-        boiling ? `Gasförmig (${sub.ww} überwunden)` : `Flüssig (${sub.ww} halten)`,
+        boiling ? `Gasförmig (${sub.ww} überw.)` : `Flüssig (${sub.ww})`,
         bx + boxW / 2,
         by + bh + 18
       );
     });
   }
 
+  function drawModel5AlkaneChart() {
+    const canvas = document.getElementById("canvasModel5AlkaneChart");
+    if (!canvas) return;
+    const { ctx, w, h } = setupHiDPICanvas(canvas);
+    const pal = getPalette();
+
+    ctx.fillStyle = pal.bg;
+    ctx.fillRect(0, 0, w, h);
+
+    const curT = state.m5.tempC;
+    m5ChartHitboxes = drawAlkaneChartCore(
+      ctx,
+      { x: 10, y: 8, w: w - 20, h: h - 14 },
+      { selectedKey: state.m5.selectedAlkane, heaterTemp: curT, padL: 48, padR: 16, padT: 12, padB: 32 },
+      pal
+    );
+
+    const sel = ALKANES_DATA.find((a) => a.key === state.m5.selectedAlkane) || ALKANES_DATA[4];
+    const badgeEl = document.getElementById("m5AlkanInfoBadge");
+    const capEl = document.getElementById("m5AlkaneCaption");
+    const stateText = curT >= sel.bp ? "gasförmig" : curT < sel.mp ? "fest" : "flüssig";
+    if (badgeEl) badgeEl.textContent = `${sel.formula} (${sel.name}): ${fmtTempC(sel.bp)}`;
+    if (capEl) {
+      capEl.textContent = `${sel.name} (${sel.formula}, Smp. ${fmtTempC(sel.mp)}, Sdp. ${fmtTempC(sel.bp)}): Bei T = ${curT} °C ist es ${stateText}. Längere Ketten vergrößern die Kontaktfläche → stärkere London-WW!`;
+    }
+  }
+
   /* ------------------------------------------------------------------------
-     8. MODELL 4: HYDRAT-HÜLLEN-BAUKASTEN & LÖSUNGSVERHALTEN
+     10. MODELL 6: HYDRAT-HÜLLEN-BAUKASTEN & LÖSUNGSVERHALTEN
      ------------------------------------------------------------------------ */
-  // Ideal angle of H-dipole vector (pointing from O toward H-pair midpoint)
-  // For Na+ (ion at left, cx=185, cy=155), O (δ⁻) must point INWARD, so H-midpoint points OUTWARD (same angle as from ion to water!)
-  // For Cl- (ion at right, cx=475, cy=155), H (δ⁺) must point INWARD, so H-midpoint points INWARD (opposite angle from ion to water!)
   const HYDRAT_SLOTS = [
     // Around Na+ (indices 0..3)
     { ion: "Na+", ix: 185, iy: 155, dx: 0, dy: -84, idealOutward: 270 },
@@ -2035,53 +2861,53 @@
     { ion: "Cl-", ix: 475, iy: 155, dx: -84, dy: 0, idealOutward: 0 }
   ];
 
-  function initModel4() {
-    const modeBtns = document.querySelectorAll("[data-m4-mode]");
-    const phaseBtns = document.querySelectorAll("[data-m4-phase]");
-    const mixBtns = document.querySelectorAll("[data-m4-mix]");
-    const autoBtn = document.getElementById("m4AutoSolveBtn");
-    const scrambleBtn = document.getElementById("m4ScrambleBtn");
-    const canvas = document.getElementById("canvasModel4");
+  function initModel6() {
+    const modeBtns = document.querySelectorAll("[data-m6-mode]");
+    const phaseBtns = document.querySelectorAll("[data-m6-phase]");
+    const mixBtns = document.querySelectorAll("[data-m6-mix]");
+    const autoBtn = document.getElementById("m6AutoSolveBtn");
+    const scrambleBtn = document.getElementById("m6ScrambleBtn");
+    const canvas = document.getElementById("canvasModel6");
 
     function setMode(mode) {
-      state.m4.mode = mode;
-      modeBtns.forEach((b) => b.classList.toggle("active", b.dataset.m4Mode === mode));
-      document.getElementById("m4ControlsBuilder").hidden = mode !== "builder";
-      document.getElementById("m4ControlsPhases").hidden = mode !== "phases";
-      document.getElementById("m4ControlsMix").hidden = mode !== "mix";
-      drawModel4();
+      state.m6.mode = mode;
+      modeBtns.forEach((b) => b.classList.toggle("active", b.dataset.m6Mode === mode));
+      document.getElementById("m6ControlsBuilder").hidden = mode !== "builder";
+      document.getElementById("m6ControlsPhases").hidden = mode !== "phases";
+      document.getElementById("m6ControlsMix").hidden = mode !== "mix";
+      drawModel6();
     }
 
-    modeBtns.forEach((b) => b.addEventListener("click", () => setMode(b.dataset.m4Mode)));
+    modeBtns.forEach((b) => b.addEventListener("click", () => setMode(b.dataset.m6Mode)));
 
     phaseBtns.forEach((b) => {
       b.addEventListener("click", () => {
-        state.m4.phase = parseInt(b.dataset.m4Phase, 10);
+        state.m6.phase = parseInt(b.dataset.m6Phase, 10);
         phaseBtns.forEach((x) => x.classList.toggle("active", x === b));
-        drawModel4();
+        drawModel6();
       });
     });
 
     mixBtns.forEach((b) => {
       b.addEventListener("click", () => {
-        state.m4.mix = b.dataset.m4Mix;
+        state.m6.mix = b.dataset.m6Mix;
         mixBtns.forEach((x) => x.classList.toggle("active", x === b));
-        drawModel4();
+        drawModel6();
       });
     });
 
     autoBtn.addEventListener("click", () => {
-      state.m4.builderAngles = HYDRAT_SLOTS.map((s) => s.idealOutward);
-      drawModel4();
+      state.m6.builderAngles = HYDRAT_SLOTS.map((s) => s.idealOutward);
+      drawModel6();
     });
 
     scrambleBtn.addEventListener("click", () => {
-      state.m4.builderAngles = HYDRAT_SLOTS.map((s) => (s.idealOutward + 90 * (1 + Math.floor(Math.random() * 3))) % 360);
-      drawModel4();
+      state.m6.builderAngles = HYDRAT_SLOTS.map((s) => (s.idealOutward + 90 * (1 + Math.floor(Math.random() * 3))) % 360);
+      drawModel6();
     });
 
     canvas.addEventListener("click", (e) => {
-      if (state.m4.mode !== "builder") return;
+      if (state.m6.mode !== "builder") return;
       const rect = canvas.getBoundingClientRect();
       const x = ((e.clientX - rect.left) / rect.width) * 660;
       const y = ((e.clientY - rect.top) / rect.height) * 310;
@@ -2090,30 +2916,29 @@
         const wx = slot.ix + slot.dx;
         const wy = slot.iy + slot.dy;
         if (Math.hypot(x - wx, y - wy) <= 38) {
-          state.m4.builderAngles[idx] = (state.m4.builderAngles[idx] + 90) % 360;
-          drawModel4();
+          state.m6.builderAngles[idx] = (state.m6.builderAngles[idx] + 90) % 360;
+          drawModel6();
         }
       });
     });
 
-    // Support deep-linking via query parameters (e.g. ?m4mode=mix&m4mix=pentan)
+    // Support deep-linking via query parameters (e.g. ?m6mode=mix&m6mix=alkanes#step6)
     try {
       const sp = new URLSearchParams(window.location.search);
-      const qMode = sp.get("m4mode");
-      const qMix = sp.get("m4mix");
+      const qMode = sp.get("m6mode");
+      const qMix = sp.get("m6mix");
       if (qMode && ["builder", "phases", "mix"].includes(qMode)) {
         setMode(qMode);
       }
-      if (qMix && ["nacl", "hcl", "pentan"].includes(qMix)) {
-        state.m4.mix = qMix;
-        mixBtns.forEach((x) => x.classList.toggle("active", x.dataset.m4Mix === qMix));
-        drawModel4();
+      if (qMix && ["nacl", "hcl", "pentan", "alkanes"].includes(qMix)) {
+        state.m6.mix = qMix;
+        mixBtns.forEach((x) => x.classList.toggle("active", x.dataset.m6Mix === qMix));
+        drawModel6();
       }
     } catch (_) {}
   }
 
   function drawDipoleWater(ctx, cx, cy, angleDeg, pal, scale = 1) {
-    // At angleDeg = 0: O is at (-6*scale, 0), two H's point toward +x (at +14, ±13)
     ctx.save();
     ctx.translate(cx, cy);
     ctx.rotate((angleDeg * Math.PI) / 180);
@@ -2128,7 +2953,6 @@
     ctx.lineTo(14, 12);
     ctx.stroke();
 
-    // O atom (δ⁻)
     ctx.fillStyle = pal.deltaMinus;
     ctx.beginPath();
     ctx.arc(-6, 0, 12, 0, Math.PI * 2);
@@ -2142,7 +2966,6 @@
     ctx.textBaseline = "middle";
     ctx.fillText("O", -6, 0.5);
 
-    // H atoms (δ⁺)
     [
       { x: 14, y: -12 },
       { x: 14, y: 12 }
@@ -2177,8 +3000,47 @@
     ctx.fillText(label, x, y + 1);
   }
 
-  function drawModel4() {
-    const canvas = document.getElementById("canvasModel4");
+  function drawAlkaneChainMini(ctx, cx, cy, nCarbons, pal, fillColor) {
+    const stepX = 21;
+    const totalW = (nCarbons - 1) * stepX + 34;
+    const startX = cx - ((nCarbons - 1) * stepX) / 2;
+
+    ctx.fillStyle = pal.dark ? "rgba(251, 191, 36, 0.20)" : "rgba(245, 158, 11, 0.20)";
+    ctx.strokeStyle = pal.dark ? "rgba(251, 191, 36, 0.55)" : "rgba(217, 119, 6, 0.45)";
+    ctx.lineWidth = 1.4;
+    drawRoundedRect(ctx, cx - totalW / 2, cy - 19, totalW, 38, 14);
+    ctx.fill();
+    ctx.stroke();
+
+    const coords = Array.from({ length: nCarbons }, (_, i) => ({
+      x: startX + i * stepX,
+      y: cy + (i % 2 === 0 ? 5 : -5)
+    }));
+
+    ctx.strokeStyle = pal.ink;
+    ctx.lineWidth = 2.4;
+    ctx.beginPath();
+    coords.forEach((pt, i) => (i === 0 ? ctx.moveTo(pt.x, pt.y) : ctx.lineTo(pt.x, pt.y)));
+    ctx.stroke();
+
+    coords.forEach((pt) => {
+      ctx.beginPath();
+      ctx.arc(pt.x, pt.y, 7.5, 0, Math.PI * 2);
+      ctx.fillStyle = fillColor;
+      ctx.fill();
+      ctx.strokeStyle = "#ffffff";
+      ctx.lineWidth = 1.2;
+      ctx.stroke();
+      ctx.fillStyle = "#ffffff";
+      ctx.font = `800 8.5px ${CANVAS_FONT}`;
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText("C", pt.x, pt.y + 0.5);
+    });
+  }
+
+  function drawModel6() {
+    const canvas = document.getElementById("canvasModel6");
     if (!canvas) return;
     const { ctx, w, h } = setupHiDPICanvas(canvas);
     const pal = getPalette();
@@ -2186,12 +3048,11 @@
     ctx.fillStyle = pal.bg;
     ctx.fillRect(0, 0, w, h);
 
-    const badge = document.getElementById("m4StatusBadge");
-    const caption = document.getElementById("m4Caption");
+    const badge = document.getElementById("m6StatusBadge");
+    const caption = document.getElementById("m6Caption");
     badge.classList.remove("ok", "warn");
 
-    if (state.m4.mode === "builder") {
-      // Draw Na+ and Cl- with 4 H2O slots each
+    if (state.m6.mode === "builder") {
       let correctCount = 0;
       drawIon(ctx, 185, 155, "Na⁺", true, pal);
       drawIon(ctx, 475, 155, "Cl⁻", false, pal);
@@ -2199,11 +3060,10 @@
       HYDRAT_SLOTS.forEach((slot, idx) => {
         const wx = slot.ix + slot.dx;
         const wy = slot.iy + slot.dy;
-        const ang = state.m4.builderAngles[idx];
+        const ang = state.m6.builderAngles[idx];
         const isCorrect = ang === slot.idealOutward;
         if (isCorrect) correctCount++;
 
-        // Dotted attraction if correct, red warning ring if wrong
         ctx.save();
         if (isCorrect) {
           ctx.strokeStyle = pal.ok;
@@ -2225,18 +3085,15 @@
 
         drawDipoleWater(ctx, wx, wy, ang, pal, 0.95);
 
-        // Status glyph next to slot
         ctx.font = `800 13px ${CANVAS_FONT}`;
         ctx.fillStyle = isCorrect ? pal.ok : pal.bad;
         ctx.textAlign = "center";
         ctx.fillText(isCorrect ? "✓" : "↻", wx + 28, wy - 18);
       });
 
-      // Redraw ions on top of dotted lines
       drawIon(ctx, 185, 155, "Na⁺", true, pal);
       drawIon(ctx, 475, 155, "Cl⁻", false, pal);
 
-      // Legend
       ctx.font = `700 12px ${CANVAS_FONT}`;
       ctx.textAlign = "center";
       ctx.fillStyle = pal.deltaMinus;
@@ -2249,12 +3106,11 @@
       } else {
         caption.textContent = "Klicke auf die mit ↻ markierten H₂O-Moleküle, bis der passende Teilpol nach innen zum Ion zeigt.";
       }
-    } else if (state.m4.mode === "phases") {
-      const p = state.m4.phase;
+    } else if (state.m6.mode === "phases") {
+      const p = state.m6.phase;
       badge.textContent = `Phase ${p + 1} von 3`;
 
       if (p === 0) {
-        // Phase 1: Compact NaCl lattice (3x3)
         for (let r = 0; r < 3; r++) {
           for (let c = 0; c < 3; c++) {
             const isNa = (r + c) % 2 === 0;
@@ -2263,20 +3119,18 @@
         }
         caption.textContent = "Phase 1 (Lupe): Festes Natriumchlorid-Ionengitter. Na⁺- und Cl⁻-Ionen halten durch starke Ionenbindungen zusammen.";
       } else if (p === 1) {
-        // Phase 2: Lattice + H2O attacking edges
         for (let r = 0; r < 2; r++) {
           for (let c = 0; c < 2; c++) {
             const isNa = (r + c) % 2 === 0;
             drawIon(ctx, 285 + c * 75, 120 + r * 70, isNa ? "Na⁺" : "Cl⁻", isNa, pal, 26);
           }
         }
-        drawDipoleWater(ctx, 185, 120, 180, pal, 1); // O inward to Na+
-        drawDipoleWater(ctx, 185, 190, 0, pal, 1);   // H inward to Cl-
-        drawDipoleWater(ctx, 465, 120, 180, pal, 1); // H inward to Cl-
-        drawDipoleWater(ctx, 465, 190, 0, pal, 1);   // O inward to Na+
+        drawDipoleWater(ctx, 185, 120, 180, pal, 1);
+        drawDipoleWater(ctx, 185, 190, 0, pal, 1);
+        drawDipoleWater(ctx, 465, 120, 180, pal, 1);
+        drawDipoleWater(ctx, 465, 190, 0, pal, 1);
         caption.textContent = "Phase 2: Polare Wassermoleküle (H₂O-Dipole) lagern sich mit dem entgegengesetzten Teilpol an die Rand-Ionen des Gitters an.";
       } else {
-        // Phase 3: Dissolved hydrated ions
         drawIon(ctx, 190, 155, "Na⁺", true, pal);
         drawIon(ctx, 470, 155, "Cl⁻", false, pal);
         HYDRAT_SLOTS.forEach((slot) => {
@@ -2299,13 +3153,17 @@
         caption.textContent = "Phase 3 (Lupe): Jedes Ion ist von einer stabilen Hydrat-Hülle umgeben → Das Salz löst sich auf (Stoffebene)!";
       }
     } else {
-      // Mode 3: Hydrophil vs Hydrophob Beaker + Lupe
-      const mix = state.m4.mix;
+      // Mode 3: Hydrophil vs Hydrophob / Unpolar + Unpolar
+      const mix = state.m6.mix;
       const isSoluble = mix !== "pentan";
-      badge.textContent = isSoluble ? "Löst sich (hydrophil)" : "Nicht mischbar (hydrophob)";
+      if (mix === "alkanes") {
+        badge.textContent = "Mischbar (unpolar + unpolar)";
+      } else {
+        badge.textContent = isSoluble ? "Löst sich (hydrophil)" : "Nicht mischbar (hydrophob)";
+      }
       badge.classList.add(isSoluble ? "ok" : "warn");
 
-      // Left: Macroscopic Beaker (👁️ Stoffebene)
+      // Left: Macroscopic Beaker
       ctx.fillStyle = pal.ink;
       ctx.font = `700 13px ${CANVAS_FONT}`;
       ctx.textAlign = "center";
@@ -2318,40 +3176,46 @@
       ctx.lineWidth = 2.5;
       ctx.stroke();
 
-      // Water fill
-      ctx.fillStyle = pal.dark ? "rgba(56, 189, 248, 0.24)" : "rgba(56, 189, 248, 0.28)";
-      ctx.fillRect(78, 95, 164, 165);
-
-      if (mix === "pentan") {
-        // Phase separation: liquid Pentan floats on water (ρ ≈ 0,63 g/cm³ < 1,00 g/cm³)
-        ctx.fillStyle = pal.dark ? "rgba(251, 191, 36, 0.45)" : "rgba(245, 158, 11, 0.45)";
-        ctx.fillRect(78, 66, 164, 42); // 42px liquid pentane upper layer
-
-        // Phase boundary line
-        ctx.strokeStyle = pal.dark ? "rgba(251, 191, 36, 0.85)" : "rgba(217, 119, 6, 0.85)";
-        ctx.lineWidth = 1.5;
-        ctx.beginPath();
-        ctx.moveTo(78, 108);
-        ctx.lineTo(242, 108);
-        ctx.stroke();
-
+      if (mix === "alkanes") {
+        ctx.fillStyle = pal.dark ? "rgba(251, 191, 36, 0.25)" : "rgba(245, 158, 11, 0.24)";
+        ctx.fillRect(78, 88, 164, 172);
         ctx.fillStyle = pal.ink;
-        ctx.font = `700 11px ${CANVAS_FONT}`;
-        ctx.fillText("Pentan-Phase (oben, unpolar)", 160, 83);
-        ctx.font = `500 10px ${CANVAS_FONT}`;
-        ctx.fillText("ρ ≈ 0,63 g/cm³", 160, 98);
-
-        ctx.font = `700 11px ${CANVAS_FONT}`;
-        ctx.fillText("Wasser-Phase (unten, polar)", 160, 180);
-        ctx.font = `500 10px ${CANVAS_FONT}`;
-        ctx.fillText("ρ = 1,00 g/cm³", 160, 195);
+        ctx.font = `700 11.5px ${CANVAS_FONT}`;
+        ctx.fillText("Klare, homogene Mischung", 160, 166);
+        ctx.font = `500 10.5px ${CANVAS_FONT}`;
+        ctx.fillText("(unpolar in unpolar)", 160, 184);
       } else {
-        ctx.fillStyle = pal.ink;
-        ctx.font = `700 12px ${CANVAS_FONT}`;
-        ctx.fillText("Klare, homogene Lösung", 160, 178);
+        ctx.fillStyle = pal.dark ? "rgba(56, 189, 248, 0.24)" : "rgba(56, 189, 248, 0.28)";
+        ctx.fillRect(78, 95, 164, 165);
+
+        if (mix === "pentan") {
+          ctx.fillStyle = pal.dark ? "rgba(251, 191, 36, 0.45)" : "rgba(245, 158, 11, 0.45)";
+          ctx.fillRect(78, 66, 164, 42);
+          ctx.strokeStyle = pal.dark ? "rgba(251, 191, 36, 0.85)" : "rgba(217, 119, 6, 0.85)";
+          ctx.lineWidth = 1.5;
+          ctx.beginPath();
+          ctx.moveTo(78, 108);
+          ctx.lineTo(242, 108);
+          ctx.stroke();
+
+          ctx.fillStyle = pal.ink;
+          ctx.font = `700 11px ${CANVAS_FONT}`;
+          ctx.fillText("Pentan-Phase (oben, unpolar)", 160, 83);
+          ctx.font = `500 10px ${CANVAS_FONT}`;
+          ctx.fillText("ρ ≈ 0,63 g/cm³", 160, 98);
+
+          ctx.font = `700 11px ${CANVAS_FONT}`;
+          ctx.fillText("Wasser-Phase (unten, polar)", 160, 180);
+          ctx.font = `500 10px ${CANVAS_FONT}`;
+          ctx.fillText("ρ = 1,00 g/cm³", 160, 195);
+        } else {
+          ctx.fillStyle = pal.ink;
+          ctx.font = `700 12px ${CANVAS_FONT}`;
+          ctx.fillText("Klare, homogene Lösung", 160, 178);
+        }
       }
 
-      // Right: Magnifying glass (🔍 Teilchenebene)
+      // Right: Magnifying glass
       ctx.fillStyle = pal.ink;
       ctx.font = `700 13px ${CANVAS_FONT}`;
       ctx.fillText("🔍 Teilchenebene (Lupe)", 465, 28);
@@ -2372,7 +3236,6 @@
         drawDipoleWater(ctx, 395, 162, 180, pal, 0.85);
         caption.textContent = "Salz (NaCl) + Wasser: Polare H₂O-Dipole bilden Hydrat-Hüllen um Na⁺ und Cl⁻ → Salz löst sich vollständig.";
       } else if (mix === "hcl") {
-        // Polar HCl molecule interacting with H2O dipoles
         ctx.fillStyle = pal.deltaPlus;
         ctx.beginPath(); ctx.arc(445, 162, 14, 0, Math.PI * 2); ctx.fill();
         ctx.fillStyle = pal.deltaMinus;
@@ -2384,16 +3247,42 @@
         drawDipoleWater(ctx, 390, 162, 180, pal, 0.85);
         drawDipoleWater(ctx, 540, 162, 180, pal, 0.85);
         caption.textContent = "HCl (polar, hydrophil) + Wasser: Ähnliches löst sich in Ähnlichem — polare Moleküle ziehen H₂O-Dipole an.";
+      } else if (mix === "alkanes") {
+        ctx.fillStyle = pal.ink;
+        ctx.font = `700 10.5px ${CANVAS_FONT}`;
+        ctx.textAlign = "center";
+        ctx.fillText("Pentan (C₅H₁₂)", 465, 86);
+        drawAlkaneChainMini(ctx, 465, 114, 5, pal, pal.dark ? "#d97706" : "#f59e0b");
+
+        ctx.save();
+        ctx.strokeStyle = pal.warn;
+        ctx.lineWidth = 2.2;
+        ctx.setLineDash([4, 3]);
+        [-36, -12, 12, 36].forEach((dx) => {
+          ctx.beginPath();
+          ctx.moveTo(465 + dx, 134);
+          ctx.lineTo(465 + dx, 178);
+          ctx.stroke();
+        });
+        ctx.restore();
+
+        ctx.fillStyle = pal.warn;
+        ctx.font = `800 10.5px ${CANVAS_FONT}`;
+        ctx.fillText("London-WW (ähnlich stark)", 465, 160);
+
+        drawAlkaneChainMini(ctx, 465, 198, 7, pal, pal.dark ? "#b45309" : "#d97706");
+        ctx.fillStyle = pal.ink;
+        ctx.font = `700 10.5px ${CANVAS_FONT}`;
+        ctx.fillText("Heptan (C₇H₁₆)", 465, 232);
+
+        caption.textContent = "Pentan + Heptan (beide unpolar): Ähnliches löst sich in Ähnlichem — beide Moleküle ziehen sich über London-WW an und mischen sich homogen!";
       } else {
-        // Unpolar Pentan pushed out from H2O network
-        // Water network below with hydrogen bonds
         drawDipoleWater(ctx, 415, 202, 30, pal, 0.8);
         drawDipoleWater(ctx, 465, 218, 270, pal, 0.8);
         drawDipoleWater(ctx, 515, 202, 150, pal, 0.8);
         drawDipoleWater(ctx, 440, 168, 0, pal, 0.8);
         drawDipoleWater(ctx, 490, 168, 180, pal, 0.8);
 
-        // H-bonds (dashed lines)
         ctx.strokeStyle = pal.deltaMinus;
         ctx.lineWidth = 2;
         ctx.setLineDash([4, 3]);
@@ -2408,54 +3297,11 @@
         ctx.textAlign = "center";
         ctx.fillText("H₂O-Netzwerk (H-Brücken)", 465, 248);
 
-        // Pentan label
         ctx.fillStyle = pal.ink;
         ctx.font = `700 10.5px ${CANVAS_FONT}`;
-        ctx.textAlign = "center";
         ctx.fillText("Pentan (C₅H₁₂, unpolar)", 465, 65);
 
-        // Pentan molecule (C5H12) at the top:
-        // Soft rounded unpolar envelope
-        ctx.fillStyle = pal.dark ? "rgba(251, 191, 36, 0.22)" : "rgba(245, 158, 11, 0.22)";
-        ctx.strokeStyle = pal.dark ? "rgba(251, 191, 36, 0.55)" : "rgba(217, 119, 6, 0.45)";
-        ctx.lineWidth = 1.5;
-        drawRoundedRect(ctx, 404, 73, 122, 42, 14);
-        ctx.fill();
-        ctx.stroke();
-
-        // 5 Carbon atoms in zigzag chain
-        const cCoords = [
-          { x: 418, y: 100 },
-          { x: 441, y: 86 },
-          { x: 465, y: 100 },
-          { x: 489, y: 86 },
-          { x: 512, y: 100 }
-        ];
-
-        // Carbon-Carbon backbone
-        ctx.strokeStyle = pal.ink;
-        ctx.lineWidth = 2.6;
-        ctx.beginPath();
-        cCoords.forEach((pt, i) => {
-          if (i === 0) ctx.moveTo(pt.x, pt.y);
-          else ctx.lineTo(pt.x, pt.y);
-        });
-        ctx.stroke();
-
-        // C atom circles
-        cCoords.forEach((pt) => {
-          ctx.beginPath();
-          ctx.arc(pt.x, pt.y, 9, 0, Math.PI * 2);
-          ctx.fillStyle = pal.dark ? "#d97706" : "#f59e0b";
-          ctx.fill();
-          ctx.strokeStyle = "#ffffff";
-          ctx.lineWidth = 1.5;
-          ctx.stroke();
-          ctx.fillStyle = "#ffffff";
-          ctx.font = `800 9.5px ${CANVAS_FONT}`;
-          ctx.textAlign = "center";
-          ctx.fillText("C", pt.x, pt.y + 3.2);
-        });
+        drawAlkaneChainMini(ctx, 465, 94, 5, pal, pal.dark ? "#d97706" : "#f59e0b");
 
         caption.textContent = "Pentan (C₅H₁₂, unpolar): Die H₂O-Dipole ziehen sich über starke H-Brücken zusammen und drängen unpolare Pentan-Moleküle heraus → flüssiges Pentan schwimmt als obere Phase auf Wasser (Phasentrennung).";
       }
@@ -2593,6 +3439,12 @@
     if (resetBtn) {
       resetBtn.addEventListener("click", () => {
         state.answers = {};
+        if (state.m4) state.m4.transferText = "";
+        const transferInput = document.getElementById("m4TransferInput");
+        if (transferInput) {
+          transferInput.value = "";
+          transferInput.dispatchEvent(new Event("input"));
+        }
         saveProgress();
         renderAllQuizzes();
       });
@@ -2603,23 +3455,11 @@
     drawModel1();
     drawModel2();
     drawModel3Lupe();
-    drawModel3Boil();
-    // Support deep-linking via query parameters (e.g. ?m4mode=mix&m4mix=pentan)
-    try {
-      const sp = new URLSearchParams(window.location.search);
-      const qMode = sp.get("m4mode");
-      const qMix = sp.get("m4mix");
-      if (qMode && ["builder", "phases", "mix"].includes(qMode)) {
-        setMode(qMode);
-      }
-      if (qMix && ["nacl", "hcl", "pentan"].includes(qMix)) {
-        state.m4.mix = qMix;
-        mixBtns.forEach((x) => x.classList.toggle("active", x.dataset.m4Mix === qMix));
-        drawModel4();
-      }
-    } catch (_) {}
-
-    drawModel4();
+    drawModel4London();
+    drawModel4Alkane();
+    drawModel5Boil();
+    drawModel5AlkaneChart();
+    drawModel6();
   }
 
   document.addEventListener("DOMContentLoaded", () => {
@@ -2628,6 +3468,8 @@
     initModel2();
     initModel3();
     initModel4();
+    initModel5();
+    initModel6();
     initThemeToggle();
     initTabs();
     renderAllQuizzes();
