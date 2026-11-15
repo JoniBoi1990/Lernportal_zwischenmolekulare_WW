@@ -49,6 +49,48 @@
     hf: { sym1: "H", en1: 2.1, lp1: 0, sym2: "F", en2: 4.0, lp2: 3, note: "Fluor hat die höchste EN (4,0): ΔEN = 1,9 → sehr stark polare Elektronenpaarbindung." }
   };
 
+  const PRECHECK_QUESTIONS = [
+    {
+      id: "pre_q1",
+      step: "step1",
+      shortTitle: "Schritt 1 (Polare Bindung & EN)",
+      question: "1. Polare Bindung: In HCl hat Chlor (EN = 3,0) eine deutlich höhere Elektronegativität als Wasserstoff (EN = 2,1). Welche Aussage stimmt?",
+      options: [
+        "Das Chlor-Atom entreißt dem Wasserstoff-Atom das Bindungselektron vollständig, sodass H⁺- und Cl⁻-Ionen entstehen",
+        "Das gemeinsame Bindungselektronenpaar wird stärker vom Chlor-Atom angezogen; es entstehen Teilladungen δ⁻ (an Cl) und δ⁺ (an H)",
+        "Da eine Elektronenpaarbindung vorliegt, teilen sich beide Atome die Elektronen exakt symmetrisch ohne Teilladungen"
+      ],
+      correct: 1,
+      explanation: "Bei ΔEN = 0,9 (> 0,5) entsteht eine polare Elektronenpaarbindung mit Teilladungen δ⁺ und δ⁻, aber noch keine Ionenbindung."
+    },
+    {
+      id: "pre_q2",
+      step: "step2",
+      shortTitle: "Schritt 2 (Symmetrie & Dipol-Moleküle)",
+      question: "2. Räumlicher Bau: Kohlenstoffdioxid (CO₂) besitzt zwei stark polare C=O-Bindungen (ΔEN = 1,0). Warum ist CO₂ trotzdem kein permanenter Dipol, Wasser (H₂O) aber schon?",
+      options: [
+        "Weil CO₂ linear gebaut ist (180°): Die Schwerpunkte von δ⁺ und δ⁻ fallen im Zentrum zusammen und heben ihre Wirkung nach außen auf",
+        "Weil Kohlenstoff und Sauerstoff in Wirklichkeit exakt dieselbe Elektronegativität besitzen",
+        "Weil nur flüssige Stoffe wie Wasser Dipole sein können, Gase wie CO₂ jedoch grundsätzlich unpolar sind"
+      ],
+      correct: 0,
+      explanation: "Beim linearen CO₂ (180°) fallen die Ladungsschwerpunkte zusammen (kein Dipol); beim gewinkelten H₂O (104,5°) liegen sie getrennt."
+    },
+    {
+      id: "pre_q3",
+      step: "step3",
+      shortTitle: "Schritt 3 (Dipol-Dipol-WW & H-Brücken)",
+      question: "3. Zwischenmolekulare WW: Unter welcher Voraussetzung bilden sich zwischen benachbarten Molekülen besonders starke Wasserstoffbrücken?",
+      options: [
+        "Sobald ein Molekül mindestens ein Wasserstoff-Atom enthält (also z. B. auch zwischen Methan-Molekülen CH₄)",
+        "Wenn ein stark positiv polarisiertes H-Atom (δ⁺, gebunden an F, O oder N) mit dem freien Elektronenpaar eines stark elektronegativen Atoms (δ⁻) eines Nachbarmoleküls wechselwirkt",
+        "Wenn sich zwei Wasserstoff-Atome innerhalb desselben Moleküls zu einem H₂-Molekül zusammenschließen"
+      ],
+      correct: 1,
+      explanation: "Wasserstoffbrücken erfordern ein H-Atom an F, O oder N (starkes δ⁺) sowie ein freies Elektronenpaar an F, O oder N eines Nachbarmoleküls."
+    }
+  ];
+
   const QUIZZES = {
     step1: [
       {
@@ -272,6 +314,8 @@
     london10: "step4",
     effects: "step5"
   };
+
+  let goToPathAndStep = null;
 
   const state = {
     learningPath: "all",
@@ -554,6 +598,34 @@
       }
     }
 
+    goToPathAndStep = (pathId, stepId) => {
+      applyLearningPathUI(pathId);
+      selectStep(stepId, false);
+      const panel = document.getElementById(`panel-${stepId}`);
+      if (panel) {
+        const reduced = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+        panel.scrollIntoView({ behavior: reduced ? "auto" : "smooth", block: "start" });
+      }
+    };
+
+    const precheckToggleBtn = document.getElementById("precheckToggleBtn");
+    const precheckCloseBtn = document.getElementById("precheckCloseBtn");
+    const precheckDrawer = document.getElementById("precheckDrawer");
+
+    function setPrecheckOpen(isOpen) {
+      if (!precheckDrawer || !precheckToggleBtn) return;
+      precheckDrawer.hidden = !isOpen;
+      precheckToggleBtn.setAttribute("aria-expanded", String(isOpen));
+      precheckToggleBtn.classList.toggle("active", isOpen);
+    }
+
+    if (precheckToggleBtn && precheckDrawer) {
+      precheckToggleBtn.addEventListener("click", () => setPrecheckOpen(precheckDrawer.hidden));
+    }
+    if (precheckCloseBtn) {
+      precheckCloseBtn.addEventListener("click", () => setPrecheckOpen(false));
+    }
+
     pathButtons.forEach((btn) => {
       btn.addEventListener("click", () => selectLearningPath(btn.dataset.pathSelect, true));
     });
@@ -611,13 +683,16 @@
       scrollObs.observe(lastTab);
     }
 
-    // Apply URL query ?path=... and hash #step... if provided
+    // Apply URL query ?path=..., ?precheck=1 and hash #step... if provided
     let urlPath = null;
     try {
       const sp = new URLSearchParams(window.location.search);
       const qPath = sp.get("path");
       if (qPath && Object.hasOwn(PATH_STEPS, qPath)) {
         urlPath = qPath;
+      }
+      if (sp.get("precheck") === "1") {
+        setPrecheckOpen(true);
       }
     } catch (_) {}
 
@@ -3782,66 +3857,171 @@
   }
 
   /* ------------------------------------------------------------------------
-     9. MINI-CHECKS & GESAMT-CHECK (QUIZ ENGINE)
+     9. MINI-CHECKS, VORWISSEN-CHECK & GESAMT-CHECK (QUIZ ENGINE)
      ------------------------------------------------------------------------ */
+  function createQuizCard(item, onUpdate) {
+    const card = document.createElement("div");
+    card.className = "quiz-card";
+
+    const qEl = document.createElement("p");
+    qEl.className = "quiz-q";
+    qEl.textContent = item.question;
+    card.appendChild(qEl);
+
+    const optsDiv = document.createElement("div");
+    optsDiv.className = "quiz-options";
+
+    const fbDiv = document.createElement("div");
+    fbDiv.className = "quiz-feedback";
+    fbDiv.hidden = true;
+
+    function applyAnswerState(chosenIdx) {
+      const buttons = optsDiv.querySelectorAll("button");
+      buttons.forEach((b, idx) => {
+        b.classList.remove("is-correct", "is-wrong");
+        if (idx === chosenIdx) {
+          b.classList.add(idx === item.correct ? "is-correct" : "is-wrong");
+        }
+      });
+      const isOk = chosenIdx === item.correct;
+      fbDiv.hidden = false;
+      fbDiv.className = `quiz-feedback ${isOk ? "ok" : "bad"}`;
+      fbDiv.textContent = `${isOk ? "✓ Richtig! " : "✗ Noch nicht ganz: "}${item.explanation}`;
+    }
+
+    item.options.forEach((optText, idx) => {
+      const optBtn = document.createElement("button");
+      optBtn.type = "button";
+      optBtn.className = "quiz-opt-btn";
+      optBtn.textContent = `${String.fromCharCode(65 + idx)}) ${optText}`;
+      optBtn.addEventListener("click", () => {
+        state.answers[item.id] = idx;
+        saveProgress();
+        applyAnswerState(idx);
+        onUpdate();
+      });
+      optsDiv.appendChild(optBtn);
+    });
+
+    card.appendChild(optsDiv);
+    card.appendChild(fbDiv);
+
+    if (Object.hasOwn(state.answers, item.id)) {
+      applyAnswerState(state.answers[item.id]);
+    }
+
+    return card;
+  }
+
+  function updatePrecheckSummaryUI() {
+    const badge = document.getElementById("precheckScoreBadge");
+    const recBox = document.getElementById("precheckRecommendation");
+    const recText = document.getElementById("precheckRecText");
+    const recActions = document.getElementById("precheckRecActions");
+    const pathCards = document.querySelectorAll(".path-card[data-path-select]");
+
+    let answered = 0;
+    let preCorrect = 0;
+    const missedItems = [];
+
+    PRECHECK_QUESTIONS.forEach((item) => {
+      if (Object.hasOwn(state.answers, item.id)) {
+        answered++;
+        if (state.answers[item.id] === item.correct) {
+          preCorrect++;
+        } else {
+          missedItems.push(item);
+        }
+      }
+    });
+
+    if (badge) {
+      badge.textContent = `${preCorrect}/3`;
+      badge.classList.toggle("done", answered === 3 && preCorrect === 3);
+    }
+
+    pathCards.forEach((c) => c.classList.remove("is-recommended"));
+
+    if (!recBox || !recText || !recActions) return;
+    recActions.innerHTML = "";
+
+    if (answered === 0) {
+      recBox.hidden = true;
+      recBox.classList.remove("rec-ok", "rec-warn");
+      return;
+    }
+
+    recBox.hidden = false;
+    recBox.classList.remove("rec-ok", "rec-warn");
+
+    if (answered < PRECHECK_QUESTIONS.length) {
+      recText.textContent = `Bisher ${answered}/3 Fragen beantwortet (${preCorrect} richtig) – beantworte alle 3 Fragen für deine Lernpfad-Empfehlung.`;
+      return;
+    }
+
+    if (preCorrect === PRECHECK_QUESTIONS.length) {
+      recBox.classList.add("rec-ok");
+      recText.textContent = "✓ 3 / 3 richtig! Dein Vorwissen aus Klasse 9 sitzt sicher. Empfehlung: Starte direkt mit Lernpfad 2 (Temporäre Dipole & London-WW, Schritt 4)!";
+      const recCard = document.querySelector('.path-card[data-path-select="london10"]');
+      if (recCard) recCard.classList.add("is-recommended");
+
+      const jumpBtn = document.createElement("button");
+      jumpBtn.type = "button";
+      jumpBtn.className = "btn btn-primary btn-sm";
+      jumpBtn.textContent = "Direkt zu Lernpfad 2 (Schritt 4: London-WW) →";
+      jumpBtn.addEventListener("click", () => {
+        if (goToPathAndStep) goToPathAndStep("london10", "step4");
+      });
+      recActions.appendChild(jumpBtn);
+    } else {
+      const firstMissed = missedItems[0];
+      recBox.classList.add("rec-warn");
+      recText.textContent = `Empfehlung (${preCorrect} / 3 richtig): Wiederhole vorab in Lernpfad 1 gezielt ${missedItems.map((i) => i.shortTitle).join(" & ")}.`;
+      const recCard = document.querySelector('.path-card[data-path-select="review9"]');
+      if (recCard) recCard.classList.add("is-recommended");
+
+      const firstBtn = document.createElement("button");
+      firstBtn.type = "button";
+      firstBtn.className = "btn btn-primary btn-sm";
+      firstBtn.textContent = `Mit ${firstMissed.shortTitle} starten →`;
+      firstBtn.addEventListener("click", () => {
+        if (goToPathAndStep) goToPathAndStep("review9", firstMissed.step);
+      });
+      recActions.appendChild(firstBtn);
+
+      if (firstMissed.step !== "step1") {
+        const allRevBtn = document.createElement("button");
+        allRevBtn.type = "button";
+        allRevBtn.className = "btn btn-secondary btn-sm";
+        allRevBtn.textContent = "Kompletten Lernpfad 1 (Schritte 1–3) öffnen";
+        allRevBtn.addEventListener("click", () => {
+          if (goToPathAndStep) goToPathAndStep("review9", "step1");
+        });
+        recActions.appendChild(allRevBtn);
+      }
+    }
+  }
+
+  function renderPrecheck() {
+    const container = document.getElementById("quiz-precheck");
+    if (!container) return;
+    container.innerHTML = "";
+    PRECHECK_QUESTIONS.forEach((item) => {
+      container.appendChild(createQuizCard(item, updatePrecheckSummaryUI));
+    });
+    updatePrecheckSummaryUI();
+  }
+
   function renderAllQuizzes() {
+    renderPrecheck();
+
     Object.keys(QUIZZES).forEach((stepKey) => {
       const container = document.getElementById(`quiz-${stepKey}`);
       if (!container) return;
       container.innerHTML = "";
 
       QUIZZES[stepKey].forEach((item) => {
-        const card = document.createElement("div");
-        card.className = "quiz-card";
-
-        const qEl = document.createElement("p");
-        qEl.className = "quiz-q";
-        qEl.textContent = item.question;
-        card.appendChild(qEl);
-
-        const optsDiv = document.createElement("div");
-        optsDiv.className = "quiz-options";
-
-        const fbDiv = document.createElement("div");
-        fbDiv.className = "quiz-feedback";
-        fbDiv.hidden = true;
-
-        function applyAnswerState(chosenIdx) {
-          const buttons = optsDiv.querySelectorAll("button");
-          buttons.forEach((b, idx) => {
-            b.classList.remove("is-correct", "is-wrong");
-            if (idx === chosenIdx) {
-              b.classList.add(idx === item.correct ? "is-correct" : "is-wrong");
-            }
-          });
-          const isOk = chosenIdx === item.correct;
-          fbDiv.hidden = false;
-          fbDiv.className = `quiz-feedback ${isOk ? "ok" : "bad"}`;
-          fbDiv.textContent = `${isOk ? "✓ Richtig! " : "✗ Noch nicht ganz: "}${item.explanation}`;
-        }
-
-        item.options.forEach((optText, idx) => {
-          const optBtn = document.createElement("button");
-          optBtn.type = "button";
-          optBtn.className = "quiz-opt-btn";
-          optBtn.textContent = `${String.fromCharCode(65 + idx)}) ${optText}`;
-          optBtn.addEventListener("click", () => {
-            state.answers[item.id] = idx;
-            saveProgress();
-            applyAnswerState(idx);
-            updateProgressUI();
-          });
-          optsDiv.appendChild(optBtn);
-        });
-
-        card.appendChild(optsDiv);
-        card.appendChild(fbDiv);
-
-        if (Object.hasOwn(state.answers, item.id)) {
-          applyAnswerState(state.answers[item.id]);
-        }
-
-        container.appendChild(card);
+        container.appendChild(createQuizCard(item, updateProgressUI));
       });
     });
 

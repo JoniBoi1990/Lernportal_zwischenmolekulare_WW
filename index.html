@@ -114,9 +114,15 @@
           <span class="path-hub-kicker">Dein Lernziel wählen</span>
           <h2 id="pathHubHeading">Was möchtest du heute bearbeiten?</h2>
         </div>
-        <button type="button" class="chip-btn active" id="pathAllBtn" data-path-select="all" aria-pressed="true">
-          Alle 7 Schritte anzeigen
-        </button>
+        <div class="path-hub-actions">
+          <button type="button" class="chip-btn precheck-toggle-btn" id="precheckToggleBtn" aria-expanded="false" aria-controls="precheckDrawer">
+            <span aria-hidden="true">🧭</span> Vorwissen-Check (3 Fragen Kl. 9)
+            <span class="tab-badge" id="precheckScoreBadge">0/3</span>
+          </button>
+          <button type="button" class="chip-btn active" id="pathAllBtn" data-path-select="all" aria-pressed="true">
+            Alle 7 Schritte anzeigen
+          </button>
+        </div>
       </div>
       <div class="path-grid" role="group" aria-label="Lernpfad wählen">
         <button type="button" class="path-card" data-path-select="review9" aria-pressed="false">
@@ -137,6 +143,20 @@
           <span class="path-card-desc">Siedetemperaturen (Alkane vs. Dipole), Hydrat-Hülle und Löslichkeitsverhalten vergleichen.</span>
           <span class="path-card-steps">Schritte 5 – 6 →</span>
         </button>
+      </div>
+      <div class="precheck-drawer" id="precheckDrawer" hidden>
+        <div class="precheck-head">
+          <div>
+            <strong>Diagnose-Check: Sitzt dein Vorwissen aus Klasse 9?</strong>
+            <p class="small-lead">Beantworte die 3 kurzen Single-Choice-Fragen (A, B, C) zu polaren Bindungen, Molekülsymmetrie und H-Brücken. Du erhältst sofort eine passende Lernpfad-Empfehlung!</p>
+          </div>
+          <button type="button" class="btn btn-ghost btn-sm" id="precheckCloseBtn">Ausblenden ✕</button>
+        </div>
+        <div class="precheck-grid" id="quiz-precheck"></div>
+        <div class="precheck-recommendation" id="precheckRecommendation" hidden aria-live="polite">
+          <div class="precheck-rec-text" id="precheckRecText"></div>
+          <div class="precheck-rec-actions" id="precheckRecActions"></div>
+        </div>
       </div>
     </section>
 
