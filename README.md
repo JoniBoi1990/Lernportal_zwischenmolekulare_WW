@@ -31,7 +31,7 @@ Jeder Teilschritt kombiniert auf einer Ansicht:
 3. **Dipol-Dipol-WW & Wasserstoffbrücken (`H₂O`, `SO₂`):**  
    *Modell 3 („Teilchen-Lupe Permanente Dipole“):* Zieh- und drehbares Nachbarmolekül mit Live-Anziehungskraft-Anzeige (`H-Brücken` bei `H₂O`, `Dipol-Dipol-WW` bei `SO₂` inkl. optionaler Formalladungen `⊕/⊖`).
 4. **Prinzip: Temporäre Dipole & London-Wechselwirkungen (`Kl. 10`):**  
-   *Modell 4a („Prinzip – Temporäre Dipole & Induktion“):* 4-Phasen-Modell (symmetrische Ladungsdichte → spontaner temporärer Dipol → Induktion im Nachbarteilchen → kurzzeitige London-WW) inkl. optionaler Fluktuations-Animation.  
+   *Modell 4a („Prinzip – Temporäre Dipole & Induktion“):* 4-Phasen-Modell (zeitliches Mittel → spontaner temporärer Dipol → Induktion im Nachbarteilchen → kurzzeitige London-WW) inkl. pausierbarer Fluktuations-Animation.  
    *Modell 4b („Siedetemperaturen linearer Kohlenwasserstoffe C₁–C₁₄“):* Interaktives Schmelz- und Siedepunktdiagramm (`C₁` bis `C₁₄`, `25 °C`-Linie) verknüpft mit zwei benachbarten Kohlenwasserstoff-Ketten zum Vergleich der Moleküloberfläche (Kontaktfläche) + Transfer-Freitextaufgabe.
 5. **Auswirkung 1: Siedetemperaturen & Alkan-Reihe:**  
    *Modell 5a („3-WW-Siedesimulator“):* Heizplatten-Slider (`-180 °C` bis `+120 °C`) im direkten Teilchenvergleich `CH₄` (London-WW) vs. `SO₂` (Dipol-Dipol-WW) vs. `H₂O` (Wasserstoffbrücken).  

@@ -2141,7 +2141,7 @@
     }
   }
 
-  function drawPolarizableSphere(ctx, cx, cy, r, shiftRatio, pal, isDarkCloud = true) {
+  function drawPolarizableSphere(ctx, cx, cy, r, shiftRatio, pal, isDarkCloud = true, showDelta = true) {
     // shiftRatio: -1..+1 continuously (0 = momentarily symmetric; +1 = δ⁺ left, δ⁻ right)
     const s = Math.max(-1, Math.min(1, shiftRatio));
     const absS = Math.abs(s);
@@ -2224,7 +2224,7 @@
 
     // Delta labels fade smoothly in and out across 0
     const deltaAlpha = Math.max(0, Math.min(1, (absS - 0.08) / 0.35));
-    if (deltaAlpha > 0.01) {
+    if (showDelta && deltaAlpha > 0.01) {
       const dir = s >= 0 ? 1 : -1;
       const plusX = cx - dir * (r * 0.54);
       const minusX = cx + dir * (r * 0.54);
@@ -2261,41 +2261,78 @@
     badge.classList.remove("ok", "warn");
 
     if (p === 0) {
-      // Phase 1: Symmetrische Ladungsdichte (Elektronen in ständiger symmetrischer Bewegung)
-      drawPolarizableSphere(ctx, w / 2, 130, 58, 0, pal);
+      // Phase 1: Im zeitlichen Mittel ausgeglichen (sichtbare Elektronenbewegung + Langzeit-Blende)
+      const cx = w / 2;
+      const cy = 132;
+      drawPolarizableSphere(ctx, cx, cy, 58, shift * 0.45, pal, true, false);
+
+      // Halbtransparente "Langzeit-Blende" (Zeitmittel-Halo + gestrichelter Außenring)
+      ctx.save();
+      const avgGrad = ctx.createRadialGradient(cx, cy, 12, cx, cy, 65);
+      avgGrad.addColorStop(0, pal.dark ? "rgba(15, 23, 42, 0.10)" : "rgba(248, 250, 252, 0.14)");
+      avgGrad.addColorStop(0.75, pal.dark ? "rgba(148, 163, 184, 0.20)" : "rgba(148, 163, 184, 0.22)");
+      avgGrad.addColorStop(1, pal.dark ? "rgba(148, 163, 184, 0.08)" : "rgba(148, 163, 184, 0.10)");
+      ctx.beginPath();
+      ctx.arc(cx, cy, 65, 0, Math.PI * 2);
+      ctx.fillStyle = avgGrad;
+      ctx.fill();
+      ctx.strokeStyle = pal.muted;
+      ctx.lineWidth = 1.6;
+      ctx.setLineDash([5, 4]);
+      ctx.stroke();
+      ctx.restore();
+
+      // Top badge: Langzeit-Blende (Zeitmittel)
+      const pillText = "⏱ Langzeit-Blende (Zeitmittel)";
+      ctx.font = `700 11px ${CANVAS_FONT}`;
+      const pillW = Math.ceil(ctx.measureText(pillText).width + 26);
+      drawRoundedRect(ctx, cx - pillW / 2, 16, pillW, 24, 999);
+      ctx.fillStyle = pal.surface;
+      ctx.fill();
+      ctx.strokeStyle = pal.border;
+      ctx.lineWidth = 1.4;
+      ctx.stroke();
+      ctx.fillStyle = pal.muted;
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText(pillText, cx, 28);
+      ctx.textBaseline = "alphabetic";
 
       ctx.fillStyle = pal.muted;
       ctx.font = `600 11.5px ${CANVAS_FONT}`;
       ctx.textAlign = "right";
-      ctx.fillText("Atomkern (+)", w / 2 - 74, 108);
+      ctx.fillText("Atomkern (+)", cx - 80, 114);
       ctx.beginPath();
-      ctx.moveTo(w / 2 - 68, 108);
-      ctx.lineTo(w / 2 - 12, 128);
+      ctx.moveTo(cx - 74, 112);
+      ctx.lineTo(cx - 12, 130);
       ctx.strokeStyle = pal.muted;
       ctx.lineWidth = 1.4;
       ctx.stroke();
 
       ctx.textAlign = "left";
-      ctx.fillText("Elektronenhülle", w / 2 + 74, 104);
-      ctx.fillText("(symmetrische Ladungsdichte)", w / 2 + 74, 120);
+      ctx.fillText("Elektronen ständig in Bewegung", cx + 80, 102);
+      ctx.fillText("(im zeitlichen Mittel symmetrische", cx + 80, 118);
+      ctx.fillText("Ladungsdichte → δ̄ = 0)", cx + 80, 134);
       ctx.beginPath();
-      ctx.moveTo(w / 2 + 68, 108);
-      ctx.lineTo(w / 2 + 44, 122);
+      ctx.moveTo(cx + 74, 112);
+      ctx.lineTo(cx + 44, 124);
       ctx.stroke();
 
       // Bottom summary box
+      const summaryText = "Im zeitlichen Mittel ausgeglichen → nach außen kein permanenter Dipol";
+      ctx.font = `700 12px ${CANVAS_FONT}`;
+      const boxW = Math.max(460, Math.ceil(ctx.measureText(summaryText).width + 32));
       ctx.fillStyle = pal.surface;
-      drawRoundedRect(ctx, 130, h - 48, w - 260, 32, 8);
+      drawRoundedRect(ctx, cx - boxW / 2, h - 48, boxW, 32, 8);
       ctx.fill();
       ctx.strokeStyle = pal.border;
       ctx.stroke();
       ctx.fillStyle = pal.ink;
-      ctx.font = `700 12px ${CANVAS_FONT}`;
       ctx.textAlign = "center";
-      ctx.fillText("Symmetrische Elektronenverteilung → nach außen unpolar", w / 2, h - 28);
+      ctx.fillText(summaryText, cx, h - 28);
 
-      badge.textContent = "Phase 1 · symmetrisch";
-      caption.textContent = "Im zeitlichen Mittel sind die Elektronen trotz ständiger Bewegung symmetrisch um den Atomkern verteilt → keine Teilladungen.";
+      badge.textContent = "Phase 1 · Im zeitlichen Mittel";
+      caption.textContent = "Elektronen stehen nie still: Ihre schnellen Schwankungen heben sich nur im zeitlichen Mittel zu einer symmetrischen Ladungsdichte auf → nach außen kein permanenter Dipol.";
     } else if (p === 1) {
       // Phase 2: Spontaner temporärer Dipol
       drawPolarizableSphere(ctx, w / 2, 126, 60, shift, pal);
