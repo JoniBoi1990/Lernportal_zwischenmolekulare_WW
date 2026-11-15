@@ -1024,7 +1024,8 @@
       else if (mol === "hcl") state.m2.angle = 180;
       molBtns.forEach((b) => b.classList.toggle("active", b.dataset.m2Mol === mol));
       syncModel2UI();
-      drawModel2();
+      if (state.m2.fieldOn) startModel2Anim();
+      else drawModel2();
     }
 
     molBtns.forEach((btn) => {
@@ -1034,24 +1035,49 @@
     angleSlider.addEventListener("input", () => {
       state.m2.angle = parseInt(angleSlider.value, 10);
       syncModel2UI();
-      drawModel2();
+      if (state.m2.fieldOn) startModel2Anim();
+      else drawModel2();
     });
 
     resetAngleBtn.addEventListener("click", () => {
       selectMol(state.m2.mol);
     });
 
-    fieldBtn.addEventListener("click", () => {
-      state.m2.fieldOn = !state.m2.fieldOn;
-      fieldBtn.setAttribute("aria-pressed", String(state.m2.fieldOn));
-      fieldBtn.innerHTML = `<span aria-hidden="true">⚡</span> Elektrisches Feld: ${state.m2.fieldOn ? "An" : "Aus"}`;
-      if (state.m2.fieldOn) {
-        startModel2Anim();
+    function setFieldOn(on, immediate = false) {
+      state.m2.fieldOn = on;
+      fieldBtn.setAttribute("aria-pressed", String(on));
+      fieldBtn.innerHTML = `<span aria-hidden="true">⚡</span> Elektrisches Feld: ${on ? "An" : "Aus"}`;
+      syncModel2UI();
+      if (on) {
+        if (immediate) {
+          const info = getModel2DipoleInfo();
+          if (info.isDipole) {
+            state.m2.fieldRotation = state.m2.mol === "hcl" ? Math.PI : -Math.PI / 2;
+          } else {
+            state.m2.fieldRotation = 0;
+          }
+          drawModel2();
+        } else {
+          startModel2Anim();
+        }
       } else {
         state.m2.fieldRotation = 0;
         drawModel2();
       }
-    });
+    }
+
+    fieldBtn.addEventListener("click", () => setFieldOn(!state.m2.fieldOn));
+
+    try {
+      const sp = new URLSearchParams(window.location.search);
+      const qMol = sp.get("m2mol");
+      if (qMol && ["co2", "h2o", "ch4", "hcl"].includes(qMol)) {
+        selectMol(qMol);
+      }
+      if (sp.get("m2field") === "1") {
+        setFieldOn(true, true);
+      }
+    } catch (_) {}
 
     syncModel2UI();
   }
@@ -1104,22 +1130,26 @@
       badge.classList.add("ok");
     }
 
+    const fieldHint = state.m2.fieldOn && info.isDipole
+      ? " Im elektrischen Feld zeigt δ⁻ zur +-Platte (links) und δ⁺ zur −-Platte (rechts)."
+      : "";
+
     if (state.m2.mol === "co2") {
       if (!info.isDipole) {
         caption.textContent = "CO₂ (180°): Beide O-Atome (δ⁻) ziehen gleich stark in entgegengesetzte Richtungen → Schwerpunkte von δ⁺ und δ⁻ liegen gemeinsam auf dem C-Atom!";
       } else {
-        caption.textContent = `Experiment (${state.m2.angle}°): Knickt man CO₂ gedanklich, trennen sich roter (δ⁺) und blauer (δ⁻) Schwerpunkt — dann wäre es ein Dipol!`;
+        caption.textContent = `Experiment (${state.m2.angle}°): Knickt man CO₂ gedanklich, trennen sich roter (δ⁺) und blauer (δ⁻) Schwerpunkt — dann wäre es ein Dipol!${fieldHint}`;
       }
     } else if (state.m2.mol === "h2o") {
       if (info.isDipole) {
-        caption.textContent = `H₂O (${info.angleLabel}): Gewinkelter Bau → Schwerpunkt von δ⁺ (zwischen den H-Atomen) und δ⁻ (am O-Atom) sind getrennt → permanenter Dipol.`;
+        caption.textContent = `H₂O (${info.angleLabel}): Gewinkelter Bau → Schwerpunkt von δ⁺ (zwischen den H-Atomen) und δ⁻ (am O-Atom) sind getrennt → permanenter Dipol.${fieldHint}`;
       } else {
         caption.textContent = "Experiment (180°): Wäre Wasser linear wie CO₂, würden δ⁺ und δ⁻ zusammenfallen und Wasser wäre kein Dipol!";
       }
     } else if (state.m2.mol === "ch4") {
       caption.textContent = "CH₄ (Tetraeder): Punktsymmetrisch im C-Atom (und ΔEN(C–H) = 0,4 gering) → kein Dipol → unpolarer Stoff (hydrophob, niedrige Siedetemperatur).";
     } else {
-      caption.textContent = "H–Cl (zweiatomig): Zwei unterschiedliche Pole (δ⁺ am H, δ⁻ am Cl) können sich räumlich nie aufheben → permanenter Dipol.";
+      caption.textContent = `H–Cl (zweiatomig): Zwei unterschiedliche Pole (δ⁺ am H, δ⁻ am Cl) können sich räumlich nie aufheben → permanenter Dipol.${fieldHint}`;
     }
   }
 
@@ -1134,7 +1164,7 @@
       if (info.isDipole) {
         // Target angle aligns dipole moment horizontally (+ plate on left attracts δ⁻, - plate on right attracts δ⁺)
         if (state.m2.mol === "co2") targetRot = -Math.PI / 2; // O (δ⁻) points left to + plate
-        else if (state.m2.mol === "h2o") targetRot = Math.PI / 2; // O (δ⁻) on left, H (δ⁺) on right
+        else if (state.m2.mol === "h2o") targetRot = -Math.PI / 2; // O (δ⁻) points left to + plate, H (δ⁺) right to - plate
         else if (state.m2.mol === "hcl") targetRot = Math.PI; // Cl (δ⁻) on left, H (δ⁺) on right
       }
 
@@ -1206,9 +1236,10 @@
       ctx.restore();
     }
 
+    const rot = state.m2.fieldOn ? state.m2.fieldRotation : 0;
     ctx.save();
     ctx.translate(cx, cy);
-    ctx.rotate(state.m2.fieldOn ? state.m2.fieldRotation : 0);
+    ctx.rotate(rot);
 
     // Draw symmetry dashed axis (vertical when unrotated)
     if (state.m2.mol === "co2" || state.m2.mol === "h2o") {
@@ -1220,10 +1251,19 @@
       ctx.moveTo(0, -118);
       ctx.lineTo(0, 118);
       ctx.stroke();
+      if (Math.abs(rot) < 0.3) {
+        ctx.translate(7, -104);
+        ctx.rotate(-rot);
+        ctx.textAlign = "left";
+      } else {
+        ctx.translate(0, -124);
+        ctx.rotate(-rot);
+        ctx.textAlign = "right";
+      }
       ctx.fillStyle = pal.teal;
       ctx.font = `600 11px ${CANVAS_FONT}`;
-      ctx.textAlign = "left";
-      ctx.fillText("Spiegelachse", 7, -104);
+      ctx.textBaseline = "middle";
+      ctx.fillText("Spiegelachse", 0, 0);
       ctx.restore();
     }
 
@@ -1286,8 +1326,8 @@
         drawLonePairs(ctx, centerAtom.x, centerAtom.y, centerAtom.r, 2, bondAngs, pal.ink);
       }
 
-      // Draw atoms
-      const drawAtom = (a, chargeStr, chargeColor) => {
+      // Draw atoms (keeping element symbol and δ± upright when field rotation is active)
+      const drawAtom = (a, chargeStr, chargeColor, chargeOffsetX = 0, chargeOffsetY = -a.r - 14) => {
         ctx.fillStyle = pal.surface;
         ctx.beginPath();
         ctx.arc(a.x, a.y, a.r, 0, Math.PI * 2);
@@ -1296,20 +1336,34 @@
         ctx.lineWidth = 2.6;
         ctx.stroke();
 
+        ctx.save();
+        ctx.translate(a.x, a.y);
+        ctx.rotate(-rot);
         ctx.fillStyle = pal.ink;
         ctx.font = `800 20px ${CANVAS_FONT}`;
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
-        ctx.fillText(a.sym, a.x, a.y + 1);
+        ctx.fillText(a.sym, 0, 1);
+        ctx.restore();
 
-        ctx.textBaseline = "alphabetic";
+        ctx.save();
+        ctx.translate(a.x + chargeOffsetX, a.y + chargeOffsetY);
+        ctx.rotate(-rot);
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
         ctx.fillStyle = chargeColor;
         ctx.font = `800 16px ${CANVAS_FONT}`;
-        ctx.fillText(chargeStr, a.x, a.y - a.r - 12);
+        ctx.fillText(chargeStr, 0, 0);
+        ctx.restore();
       };
 
-      drawAtom(centerAtom, isCO2 ? "δ⁺" : "δ⁻", isCO2 ? pal.deltaPlus : pal.deltaMinus);
-      sideAtoms.forEach((sa) => drawAtom(sa, isCO2 ? "δ⁻" : "δ⁺", isCO2 ? pal.deltaMinus : pal.deltaPlus));
+      if (isCO2) {
+        drawAtom(centerAtom, "δ⁺", pal.deltaPlus, 0, 38);
+        sideAtoms.forEach((sa) => drawAtom(sa, "δ⁻", pal.deltaMinus, 0, -sa.r - 14));
+      } else {
+        drawAtom(centerAtom, "δ⁻", pal.deltaMinus, -24, -26);
+        sideAtoms.forEach((sa) => drawAtom(sa, "δ⁺", pal.deltaPlus, 0, sa.r + 14));
+      }
 
       if (isCO2) {
         posCenter = { x: centerAtom.x, y: centerAtom.y };
@@ -1424,15 +1478,25 @@
         ctx.strokeStyle = a.c;
         ctx.lineWidth = 2.6;
         ctx.stroke();
+        ctx.save();
+        ctx.translate(a.p.x, a.p.y);
+        ctx.rotate(-rot);
         ctx.fillStyle = pal.ink;
         ctx.font = `800 20px ${CANVAS_FONT}`;
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
-        ctx.fillText(a.sym, a.p.x, a.p.y + 1);
-        ctx.textBaseline = "alphabetic";
+        ctx.fillText(a.sym, 0, 1);
+        ctx.restore();
+
+        ctx.save();
+        ctx.translate(a.p.x, a.p.y - a.r - 15);
+        ctx.rotate(-rot);
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
         ctx.fillStyle = a.c;
         ctx.font = `800 16px ${CANVAS_FONT}`;
-        ctx.fillText(a.d, a.p.x, a.p.y - a.r - 12);
+        ctx.fillText(a.d, 0, 0);
+        ctx.restore();
       });
 
       posCenter = hPos;
