@@ -305,9 +305,9 @@
     },
     m4: {
       phase: 0,
-      shiftPct: 0,
-      fluctuateOn: false,
-      fluctuatePhase: 0,
+      shiftPct: 82,
+      fluctuateOn: true,
+      fluctuatePhase: 0.9,
       alkane: "c5",
       transferText: ""
     },
@@ -1936,7 +1936,9 @@
     function setPhase(p) {
       state.m4.phase = p;
       phaseBtns.forEach((b) => b.classList.toggle("active", parseInt(b.dataset.m4Phase, 10) === p));
-      state.m4.shiftPct = p === 0 ? 0 : 82;
+      if (!state.m4.fluctuateOn && Math.abs(Math.sin(state.m4.fluctuatePhase)) < 0.45) {
+        state.m4.fluctuatePhase = Math.sin(state.m4.fluctuatePhase) < 0 ? -0.95 : 0.95;
+      }
       drawModel4London();
     }
 
@@ -1948,44 +1950,56 @@
 
     phaseBtns.forEach((btn) => {
       btn.addEventListener("click", () => {
-        if (state.m4.fluctuateOn) toggleFluctuation(false);
         setPhase(parseInt(btn.dataset.m4Phase, 10));
       });
     });
 
     if (nextPhaseBtn) {
       nextPhaseBtn.addEventListener("click", () => {
-        if (state.m4.fluctuateOn) toggleFluctuation(false);
         setPhase((state.m4.phase + 1) % 4);
       });
     }
 
-    function toggleFluctuation(forceState) {
-      state.m4.fluctuateOn = typeof forceState === "boolean" ? forceState : !state.m4.fluctuateOn;
-      if (fluctuateBtn) {
-        fluctuateBtn.setAttribute("aria-pressed", String(state.m4.fluctuateOn));
-        fluctuateBtn.textContent = state.m4.fluctuateOn ? "⚡ Fluktuation: An" : "⚡ Fluktuation animieren";
-      }
+    function syncFluctuateBtn() {
+      if (!fluctuateBtn) return;
+      const isPaused = !state.m4.fluctuateOn;
+      fluctuateBtn.setAttribute("aria-pressed", String(isPaused));
+      fluctuateBtn.textContent = state.m4.fluctuateOn
+        ? "⏸ Fluktuation pausieren"
+        : "▶ Fluktuation fortsetzen";
+    }
+
+    function startFluctuationLoop() {
       if (m4FluctuateRafId) {
         cancelAnimationFrame(m4FluctuateRafId);
         m4FluctuateRafId = null;
       }
-      if (state.m4.fluctuateOn) {
-        if (state.m4.phase === 0) {
-          state.m4.phase = 1;
-          phaseBtns.forEach((b) => b.classList.toggle("active", parseInt(b.dataset.m4Phase, 10) === 1));
+      if (!state.m4.fluctuateOn) return;
+      const tick = () => {
+        if (!state.m4.fluctuateOn) return;
+        if (state.activeStep === "step4") {
+          state.m4.fluctuatePhase += 0.04;
+          state.m4.shiftPct = Math.round(95 * Math.sin(state.m4.fluctuatePhase));
+          drawModel4London();
         }
-        const tick = () => {
-          if (!state.m4.fluctuateOn) return;
-          if (state.activeStep === "step4") {
-            state.m4.fluctuatePhase += 0.045;
-            state.m4.shiftPct = Math.round(50 + 45 * Math.sin(state.m4.fluctuatePhase));
-            drawModel4London();
-          }
-          m4FluctuateRafId = requestAnimationFrame(tick);
-        };
         m4FluctuateRafId = requestAnimationFrame(tick);
+      };
+      m4FluctuateRafId = requestAnimationFrame(tick);
+    }
+
+    function toggleFluctuation(forceState) {
+      state.m4.fluctuateOn = typeof forceState === "boolean" ? forceState : !state.m4.fluctuateOn;
+      if (!state.m4.fluctuateOn && Math.abs(Math.sin(state.m4.fluctuatePhase)) < 0.45) {
+        state.m4.fluctuatePhase = Math.sin(state.m4.fluctuatePhase) < 0 ? -0.95 : 0.95;
+      }
+      syncFluctuateBtn();
+      if (state.m4.fluctuateOn) {
+        startFluctuationLoop();
       } else {
+        if (m4FluctuateRafId) {
+          cancelAnimationFrame(m4FluctuateRafId);
+          m4FluctuateRafId = null;
+        }
         drawModel4London();
       }
     }
@@ -2040,8 +2054,24 @@
       });
     }
 
-    setPhase(0);
+    // Optional query-parameter support for Phase/Pause/Direction (e.g. ?m4phase=2&m4pause=1&m4dir=-1)
+    let initPhase = 0;
+    try {
+      const sp = new URLSearchParams(window.location.search);
+      const qPhase = parseInt(sp.get("m4phase"), 10);
+      if (!Number.isNaN(qPhase) && qPhase >= 0 && qPhase <= 3) initPhase = qPhase;
+      const qDir = parseInt(sp.get("m4dir"), 10);
+      if (qDir === -1) state.m4.fluctuatePhase = -0.95;
+      else if (qDir === 1) state.m4.fluctuatePhase = 0.95;
+      if (sp.get("m4pause") === "1") state.m4.fluctuateOn = false;
+    } catch (_) {}
+
+    syncFluctuateBtn();
+    setPhase(initPhase);
     setSelectedAlkane(state.m4.alkane || "c5");
+    if (state.m4.fluctuateOn) {
+      startFluctuationLoop();
+    }
   }
 
   function drawPolarizableSphere(ctx, cx, cy, r, shiftRatio, pal, isDarkCloud = true) {
@@ -2094,9 +2124,20 @@
       { x: 22, y: 18 }
     ];
     baseOffsets.forEach((off, idx) => {
-      const shiftX = shiftRatio * (r * 0.44);
-      let px = cx + off.x + shiftX;
-      let py = cy + off.y * (1 - Math.abs(shiftRatio) * 0.15);
+      const phase = state.m4.fluctuatePhase;
+      let px, py;
+      if (Math.abs(shiftRatio) < 0.08) {
+        const angle = (idx / baseOffsets.length) * Math.PI * 2 + phase * 0.9 * (idx % 2 === 0 ? 1 : -1);
+        const orbitR = (idx % 2 === 0 ? 0.42 : 0.68) * r + Math.sin(phase * 1.7 + idx * 1.3) * 4;
+        px = cx + Math.cos(angle) * orbitR;
+        py = cy + Math.sin(angle) * orbitR;
+      } else {
+        const shiftX = shiftRatio * (r * 0.44);
+        const jitterX = Math.cos(phase * 2.1 + idx * 1.4) * 2.2;
+        const jitterY = Math.sin(phase * 1.9 + idx * 1.7) * 2.2;
+        px = cx + off.x + shiftX + jitterX;
+        py = cy + off.y * (1 - Math.abs(shiftRatio) * 0.15) + jitterY;
+      }
       // Keep inside circle radius - 7
       const dist = Math.hypot(px - cx, py - cy);
       if (dist > r - 8) {
@@ -2134,16 +2175,17 @@
     ctx.fillRect(0, 0, w, h);
 
     const p = state.m4.phase;
-    const shift = state.m4.fluctuateOn
-      ? Math.sin(state.m4.fluctuatePhase) * 0.95
-      : state.m4.shiftPct / 100;
+    const rawShift = Math.sin(state.m4.fluctuatePhase) * 0.95;
+    const shift = Math.abs(rawShift) < 0.25 && !state.m4.fluctuateOn
+      ? (rawShift < 0 ? -0.82 : 0.82)
+      : rawShift;
 
     const badge = document.getElementById("m4LondonBadge");
     const caption = document.getElementById("m4LondonCaption");
     badge.classList.remove("ok", "warn");
 
     if (p === 0) {
-      // Phase 1: Symmetrische Ladungsdichte
+      // Phase 1: Symmetrische Ladungsdichte (Elektronen in ständiger symmetrischer Bewegung)
       drawPolarizableSphere(ctx, w / 2, 130, 58, 0, pal);
 
       ctx.fillStyle = pal.muted;
@@ -2177,7 +2219,7 @@
       ctx.fillText("Symmetrische Elektronenverteilung → nach außen unpolar", w / 2, h - 28);
 
       badge.textContent = "Phase 1 · symmetrisch";
-      caption.textContent = "Im zeitlichen Mittel sind die Elektronen symmetrisch um den Atomkern verteilt → keine Teilladungen.";
+      caption.textContent = "Im zeitlichen Mittel sind die Elektronen trotz ständiger Bewegung symmetrisch um den Atomkern verteilt → keine Teilladungen.";
     } else if (p === 1) {
       // Phase 2: Spontaner temporärer Dipol
       drawPolarizableSphere(ctx, w / 2, 126, 60, shift, pal);
@@ -2218,7 +2260,7 @@
       caption.textContent = "Durch spontane Bewegung verteilen sich die Elektronen kurzzeitig ungleich → ein temporärer Dipol entsteht.";
     } else if (p === 2) {
       // Phase 3: Annäherung & Induktion
-      const effShift = Math.max(0.45, Math.abs(shift)) * (shift < 0 ? -1 : 1);
+      const effShift = (Math.abs(shift) < 0.25 ? 0.55 : Math.abs(shift)) * (shift < 0 ? -1 : 1);
       const x1 = 215;
       const x2 = 445;
       const cy = 140;
@@ -2234,38 +2276,46 @@
       ctx.fillStyle = pal.teal;
       ctx.fillText("2. Induzierter temporärer Dipol", x2, cy + 72);
 
-      // Repulsion push arrow
-      ctx.strokeStyle = pal.deltaMinus;
+      // Synchronized curved induction arrow (right if δ⁻ pushes electrons right; left if δ⁺ pulls electrons left)
+      const pushRight = effShift >= 0;
+      const arrowColor = pushRight ? pal.deltaMinus : pal.deltaPlus;
+      const startX = pushRight ? x1 + 42 : x2 + 30;
+      const endX = pushRight ? x2 + 34 : x1 + 52;
+      const ctrlY = 42;
+
+      ctx.strokeStyle = arrowColor;
       ctx.lineWidth = 2.4;
       ctx.beginPath();
-      ctx.moveTo(x1 + 42, 62);
-      ctx.quadraticCurveTo(w / 2, 42, x2 + 34, 62);
+      ctx.moveTo(startX, 62);
+      ctx.quadraticCurveTo(w / 2, ctrlY, endX, 62);
       ctx.stroke();
-      // Arrowhead right
+
+      const ang = Math.atan2(62 - ctrlY, endX - w / 2);
+      const headLen = 10;
       ctx.beginPath();
-      ctx.moveTo(x2 + 34, 62);
-      ctx.lineTo(x2 + 23, 55);
-      ctx.lineTo(x2 + 25, 68);
+      ctx.moveTo(endX, 62);
+      ctx.lineTo(endX - headLen * Math.cos(ang - 0.48), 62 - headLen * Math.sin(ang - 0.48));
+      ctx.lineTo(endX - headLen * Math.cos(ang + 0.48), 62 - headLen * Math.sin(ang + 0.48));
       ctx.closePath();
-      ctx.fillStyle = pal.deltaMinus;
+      ctx.fillStyle = arrowColor;
       ctx.fill();
 
       ctx.fillStyle = pal.ink;
       ctx.font = `700 11.5px ${CANVAS_FONT}`;
       ctx.fillText(
-        effShift >= 0
-          ? "δ⁻ schiebt Elektronen im Nachbarn nach rechts (Abstoßung gleicher Ladung)"
-          : "δ⁺ zieht Elektronen im Nachbarn nach links",
+        pushRight
+          ? "δ⁻ stößt Elektronen im Nachbarn nach rechts ab (gleiche Ladung)"
+          : "δ⁺ zieht Elektronen im Nachbarn nach links an (gegensätzliche Ladung)",
         w / 2,
         28
       );
 
       badge.textContent = "Phase 3 · Induktion";
       badge.classList.add("warn");
-      caption.textContent = "Der negativ geladene Pol (δ⁻) des ersten Dipols stößt die Elektronen des Nachbarteilchens ab und induziert dort einen zweiten temporären Dipol.";
+      caption.textContent = "Durch Abstoßung (δ⁻ stößt Elektronen weg) bzw. Anziehung (δ⁺ zieht Elektronen an) induziert der erste Dipol laufend einen gleichsinnigen temporären Dipol im Nachbarteilchen.";
     } else {
       // Phase 4: Elektrostatische Anziehung = London-WW
-      const effShift = Math.max(0.55, Math.abs(shift)) * (shift < 0 ? -1 : 1);
+      const effShift = (Math.abs(shift) < 0.25 ? 0.55 : Math.abs(shift)) * (shift < 0 ? -1 : 1);
       const x1 = 248;
       const x2 = 412;
       const cy = 142;
@@ -2286,7 +2336,7 @@
       });
       ctx.restore();
 
-      // Attraction badge above
+      // Attraction badge above (matches current polarity direction)
       drawRoundedRect(ctx, w / 2 - 140, 22, 280, 32, 999);
       ctx.fillStyle = pal.surface;
       ctx.fill();
@@ -2296,7 +2346,11 @@
       ctx.fillStyle = pal.warn;
       ctx.font = `800 12.5px ${CANVAS_FONT}`;
       ctx.textAlign = "center";
-      ctx.fillText("⚡ London-WW: δ⁻ ··· δ⁺ Anziehung!", w / 2, 42);
+      ctx.fillText(
+        effShift >= 0 ? "⚡ London-WW: δ⁻ ··· δ⁺ Anziehung!" : "⚡ London-WW: δ⁺ ··· δ⁻ Anziehung!",
+        w / 2,
+        42
+      );
 
       // Bottom explanation
       ctx.fillStyle = pal.ink;
@@ -2305,7 +2359,7 @@
 
       badge.textContent = "Phase 4 · London-WW aktiv";
       badge.classList.add("ok");
-      caption.textContent = "Zwischen dem δ⁻-Bereich links und dem induzierten δ⁺-Bereich rechts entsteht kurzzeitig eine elektrostatische Anziehung: eine London-Wechselwirkung!";
+      caption.textContent = "Zwischen den entgegengesetzten Teilpolen (δ⁻ ··· δ⁺) beider temporärer Dipole wirkt bei jeder Ausrichtung eine anziehende London-Wechselwirkung!";
     }
   }
 
