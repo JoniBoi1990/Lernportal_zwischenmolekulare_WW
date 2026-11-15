@@ -2039,10 +2039,13 @@
         m4FluctuateRafId = null;
       }
       if (!state.m4.fluctuateOn) return;
-      const tick = () => {
+      let lastTs = performance.now();
+      const tick = (now) => {
         if (!state.m4.fluctuateOn) return;
+        const dt = Math.min(0.05, Math.max(0.001, (now - lastTs) / 1000));
+        lastTs = now;
         if (state.activeStep === "step4") {
-          state.m4.fluctuatePhase += 0.04;
+          state.m4.fluctuatePhase += dt * 1.85;
           state.m4.shiftPct = Math.round(95 * Math.sin(state.m4.fluctuatePhase));
           drawModel4London();
         }
@@ -2139,27 +2142,39 @@
   }
 
   function drawPolarizableSphere(ctx, cx, cy, r, shiftRatio, pal, isDarkCloud = true) {
-    // shiftRatio: 0 = symmetric; +1 = electrons shifted right (δ⁺ left, δ⁻ right)
+    // shiftRatio: -1..+1 continuously (0 = momentarily symmetric; +1 = δ⁺ left, δ⁻ right)
+    const s = Math.max(-1, Math.min(1, shiftRatio));
+    const absS = Math.abs(s);
+
     ctx.save();
     ctx.beginPath();
     ctx.arc(cx, cy, r, 0, Math.PI * 2);
-    if (Math.abs(shiftRatio) < 0.08) {
-      const grad = ctx.createRadialGradient(cx, cy, r * 0.12, cx, cy, r);
-      grad.addColorStop(0, pal.dark ? "rgba(56, 189, 248, 0.55)" : "rgba(15, 23, 42, 0.35)");
-      grad.addColorStop(1, pal.dark ? "rgba(148, 163, 184, 0.18)" : "rgba(100, 116, 139, 0.14)");
-      ctx.fillStyle = grad;
-    } else {
-      const dir = shiftRatio >= 0 ? 1 : -1;
-      const strength = Math.min(1, Math.abs(shiftRatio));
-      const xStart = cx - dir * r;
-      const xEnd = cx + dir * r;
-      const grad = ctx.createLinearGradient(xStart, cy, xEnd, cy);
-      grad.addColorStop(0, pal.dark ? `rgba(248, 113, 113, ${0.18 + 0.25 * strength})` : `rgba(220, 38, 38, ${0.10 + 0.18 * strength})`);
-      grad.addColorStop(0.45, pal.dark ? "rgba(148, 163, 184, 0.22)" : "rgba(226, 232, 240, 0.55)");
-      grad.addColorStop(1, pal.dark ? `rgba(56, 189, 248, ${0.38 + 0.42 * strength})` : `rgba(2, 132, 199, ${0.34 + 0.46 * strength})`);
-      ctx.fillStyle = grad;
-    }
+
+    // Base neutral radial electron cloud (always continuous)
+    const baseGrad = ctx.createRadialGradient(cx, cy, r * 0.12, cx, cy, r);
+    baseGrad.addColorStop(0, pal.dark ? "rgba(56, 189, 248, 0.34)" : "rgba(15, 23, 42, 0.20)");
+    baseGrad.addColorStop(1, pal.dark ? "rgba(148, 163, 184, 0.16)" : "rgba(100, 116, 139, 0.12)");
+    ctx.fillStyle = baseGrad;
     ctx.fill();
+
+    // Smooth polarization overlay whose opacity strictly vanishes as absS -> 0
+    if (absS > 0.005) {
+      const plusRgb = pal.dark ? "248, 113, 113" : "220, 38, 38";
+      const minusRgb = pal.dark ? "56, 189, 248" : "2, 132, 199";
+      const polGrad = ctx.createLinearGradient(cx - r, cy, cx + r, cy);
+      const leftColor = s >= 0
+        ? `rgba(${plusRgb}, ${(pal.dark ? 0.40 : 0.26) * absS})`
+        : `rgba(${minusRgb}, ${(pal.dark ? 0.68 : 0.72) * absS})`;
+      const rightColor = s >= 0
+        ? `rgba(${minusRgb}, ${(pal.dark ? 0.68 : 0.72) * absS})`
+        : `rgba(${plusRgb}, ${(pal.dark ? 0.40 : 0.26) * absS})`;
+      polGrad.addColorStop(0, leftColor);
+      polGrad.addColorStop(0.5, "rgba(148, 163, 184, 0)");
+      polGrad.addColorStop(1, rightColor);
+      ctx.fillStyle = polGrad;
+      ctx.fill();
+    }
+
     ctx.strokeStyle = isDarkCloud ? pal.primary : pal.border;
     ctx.lineWidth = 2;
     ctx.stroke();
@@ -2178,31 +2193,23 @@
     ctx.textBaseline = "middle";
     ctx.fillText("+", cx, cy + 0.5);
 
-    // Electron dots (6 dots) shifting cleanly according to shiftRatio
+    // Unified continuous electron motion (no discontinuous regime switch at |s| < 0.08)
     const baseOffsets = [
-      { x: -24, y: -16 },
-      { x: -28, y: 12 },
-      { x: -10, y: 26 },
-      { x: 10, y: -26 },
+      { x: -24, y: -15 },
+      { x: -26, y: 12 },
+      { x: -8, y: 24 },
+      { x: 8, y: -24 },
       { x: 24, y: -12 },
-      { x: 22, y: 18 }
+      { x: 22, y: 16 }
     ];
+    const animPhase = state.m4.fluctuatePhase;
+    const shiftX = s * (r * 0.42);
     baseOffsets.forEach((off, idx) => {
-      const phase = state.m4.fluctuatePhase;
-      let px, py;
-      if (Math.abs(shiftRatio) < 0.08) {
-        const angle = (idx / baseOffsets.length) * Math.PI * 2 + phase * 0.9 * (idx % 2 === 0 ? 1 : -1);
-        const orbitR = (idx % 2 === 0 ? 0.42 : 0.68) * r + Math.sin(phase * 1.7 + idx * 1.3) * 4;
-        px = cx + Math.cos(angle) * orbitR;
-        py = cy + Math.sin(angle) * orbitR;
-      } else {
-        const shiftX = shiftRatio * (r * 0.44);
-        const jitterX = Math.cos(phase * 2.1 + idx * 1.4) * 2.2;
-        const jitterY = Math.sin(phase * 1.9 + idx * 1.7) * 2.2;
-        px = cx + off.x + shiftX + jitterX;
-        py = cy + off.y * (1 - Math.abs(shiftRatio) * 0.15) + jitterY;
-      }
-      // Keep inside circle radius - 7
+      const orbitX = Math.cos(animPhase * 1.4 + idx * 1.15) * 4.5;
+      const orbitY = Math.sin(animPhase * 1.25 + idx * 1.55) * 4.5;
+      let px = cx + off.x * (1 - absS * 0.08) + shiftX + orbitX;
+      let py = cy + off.y * (1 - absS * 0.12) + orbitY;
+      // Keep cleanly inside circle
       const dist = Math.hypot(px - cx, py - cy);
       if (dist > r - 8) {
         const sc = (r - 8) / dist;
@@ -2211,19 +2218,23 @@
       }
       ctx.beginPath();
       ctx.arc(px, py, 3.2, 0, Math.PI * 2);
-      ctx.fillStyle = idx < 3 && Math.abs(shiftRatio) < 0.08 ? pal.ink : pal.primary;
+      ctx.fillStyle = pal.primary;
       ctx.fill();
     });
 
-    // Delta labels if polarized
-    if (Math.abs(shiftRatio) >= 0.2) {
-      const plusX = cx - Math.sign(shiftRatio) * (r * 0.54);
-      const minusX = cx + Math.sign(shiftRatio) * (r * 0.54);
+    // Delta labels fade smoothly in and out across 0
+    const deltaAlpha = Math.max(0, Math.min(1, (absS - 0.08) / 0.35));
+    if (deltaAlpha > 0.01) {
+      const dir = s >= 0 ? 1 : -1;
+      const plusX = cx - dir * (r * 0.54);
+      const minusX = cx + dir * (r * 0.54);
+      ctx.globalAlpha = deltaAlpha;
       ctx.font = `800 16px ${CANVAS_FONT}`;
       ctx.fillStyle = pal.deltaPlus;
       ctx.fillText("δ⁺", plusX, cy - r * 0.36);
       ctx.fillStyle = pal.deltaMinus;
       ctx.fillText("δ⁻", minusX, cy - r * 0.36);
+      ctx.globalAlpha = 1;
     }
 
     ctx.restore();
@@ -2243,6 +2254,7 @@
     const shift = Math.abs(rawShift) < 0.25 && !state.m4.fluctuateOn
       ? (rawShift < 0 ? -0.82 : 0.82)
       : rawShift;
+    const absShift = Math.abs(shift);
 
     const badge = document.getElementById("m4LondonBadge");
     const caption = document.getElementById("m4LondonCaption");
@@ -2288,30 +2300,42 @@
       // Phase 2: Spontaner temporärer Dipol
       drawPolarizableSphere(ctx, w / 2, 126, 60, shift, pal);
 
-      // Left & right callout boxes matching worksheet
+      // Left & right callout boxes matching worksheet, smoothly fading across neutral zero
       const leftMinus = shift < 0;
       const boxL = { x: 26, y: 78, w: 205, h: 74 };
       const boxR = { x: w - 231, y: 78, w: 205, h: 74 };
+      const boxPolAlpha = Math.max(0.20, Math.min(1, absShift / 0.35));
 
       [
         { b: boxL, isMinus: leftMinus },
         { b: boxR, isMinus: !leftMinus }
       ].forEach(({ b, isMinus }) => {
+        ctx.save();
         ctx.fillStyle = pal.surface;
         drawRoundedRect(ctx, b.x, b.y, b.w, b.h, 8);
         ctx.fill();
-        ctx.strokeStyle = isMinus ? pal.deltaMinus : pal.deltaPlus;
+        ctx.globalAlpha = boxPolAlpha;
+        ctx.strokeStyle = absShift < 0.08 ? pal.border : (isMinus ? pal.deltaMinus : pal.deltaPlus);
         ctx.lineWidth = 1.8;
         ctx.stroke();
 
         ctx.textAlign = "center";
         ctx.font = `700 11.5px ${CANVAS_FONT}`;
-        ctx.fillStyle = isMinus ? pal.deltaMinus : pal.deltaPlus;
-        ctx.fillText(isMinus ? "Mehr Elektronen (δ⁻)" : "Weniger Elektronen (δ⁺)", b.x + b.w / 2, b.y + 24);
+        ctx.fillStyle = absShift < 0.08 ? pal.muted : (isMinus ? pal.deltaMinus : pal.deltaPlus);
+        ctx.fillText(
+          absShift < 0.08 ? "Momentan ausgeglichen" : (isMinus ? "Mehr Elektronen (δ⁻)" : "Weniger Elektronen (δ⁺)"),
+          b.x + b.w / 2,
+          b.y + 24
+        );
         ctx.fillStyle = pal.muted;
         ctx.font = `500 11px ${CANVAS_FONT}`;
-        ctx.fillText(isMinus ? "daher partiell negativ geladen" : "daher partiell positiv geladen", b.x + b.w / 2, b.y + 44);
+        ctx.fillText(
+          absShift < 0.08 ? "Umkehrpunkt der Fluktuation" : (isMinus ? "daher partiell negativ geladen" : "daher partiell positiv geladen"),
+          b.x + b.w / 2,
+          b.y + 44
+        );
         ctx.fillText("vorübergehend (temporär)", b.x + b.w / 2, b.y + 60);
+        ctx.restore();
       });
 
       ctx.fillStyle = pal.primary;
@@ -2323,8 +2347,8 @@
       badge.classList.add("warn");
       caption.textContent = "Durch spontane Bewegung verteilen sich die Elektronen kurzzeitig ungleich → ein temporärer Dipol entsteht.";
     } else if (p === 2) {
-      // Phase 3: Annäherung & Induktion
-      const effShift = (Math.abs(shift) < 0.25 ? 0.55 : Math.abs(shift)) * (shift < 0 ? -1 : 1);
+      // Phase 3: Annäherung & Induktion (continuous sinusoidal glide through 0)
+      const effShift = shift;
       const x1 = 215;
       const x2 = 445;
       const cy = 140;
@@ -2340,34 +2364,42 @@
       ctx.fillStyle = pal.teal;
       ctx.fillText("2. Induzierter temporärer Dipol", x2, cy + 72);
 
-      // Synchronized curved induction arrow (right if δ⁻ pushes electrons right; left if δ⁺ pulls electrons left)
+      // Synchronized curved induction arrow fading smoothly near 0
+      const arrowAlpha = Math.max(0, Math.min(1, (absShift - 0.08) / 0.32));
       const pushRight = effShift >= 0;
-      const arrowColor = pushRight ? pal.deltaMinus : pal.deltaPlus;
-      const startX = pushRight ? x1 + 42 : x2 + 30;
-      const endX = pushRight ? x2 + 34 : x1 + 52;
-      const ctrlY = 42;
+      if (arrowAlpha > 0.01) {
+        const arrowColor = pushRight ? pal.deltaMinus : pal.deltaPlus;
+        const startX = pushRight ? x1 + 42 : x2 + 30;
+        const endX = pushRight ? x2 + 34 : x1 + 52;
+        const ctrlY = 42;
 
-      ctx.strokeStyle = arrowColor;
-      ctx.lineWidth = 2.4;
-      ctx.beginPath();
-      ctx.moveTo(startX, 62);
-      ctx.quadraticCurveTo(w / 2, ctrlY, endX, 62);
-      ctx.stroke();
+        ctx.save();
+        ctx.globalAlpha = arrowAlpha;
+        ctx.strokeStyle = arrowColor;
+        ctx.lineWidth = 2.4;
+        ctx.beginPath();
+        ctx.moveTo(startX, 62);
+        ctx.quadraticCurveTo(w / 2, ctrlY, endX, 62);
+        ctx.stroke();
 
-      const ang = Math.atan2(62 - ctrlY, endX - w / 2);
-      const headLen = 10;
-      ctx.beginPath();
-      ctx.moveTo(endX, 62);
-      ctx.lineTo(endX - headLen * Math.cos(ang - 0.48), 62 - headLen * Math.sin(ang - 0.48));
-      ctx.lineTo(endX - headLen * Math.cos(ang + 0.48), 62 - headLen * Math.sin(ang + 0.48));
-      ctx.closePath();
-      ctx.fillStyle = arrowColor;
-      ctx.fill();
+        const ang = Math.atan2(62 - ctrlY, endX - w / 2);
+        const headLen = 10;
+        ctx.beginPath();
+        ctx.moveTo(endX, 62);
+        ctx.lineTo(endX - headLen * Math.cos(ang - 0.48), 62 - headLen * Math.sin(ang - 0.48));
+        ctx.lineTo(endX - headLen * Math.cos(ang + 0.48), 62 - headLen * Math.sin(ang + 0.48));
+        ctx.closePath();
+        ctx.fillStyle = arrowColor;
+        ctx.fill();
+        ctx.restore();
+      }
 
       ctx.fillStyle = pal.ink;
       ctx.font = `700 11.5px ${CANVAS_FONT}`;
       ctx.fillText(
-        pushRight
+        absShift < 0.08
+          ? "Ladung verteilt sich neu – Induktionsrichtung kehrt sich um"
+          : pushRight
           ? "δ⁻ stößt Elektronen im Nachbarn nach rechts ab (gleiche Ladung)"
           : "δ⁺ zieht Elektronen im Nachbarn nach links an (gegensätzliche Ladung)",
         w / 2,
@@ -2378,8 +2410,8 @@
       badge.classList.add("warn");
       caption.textContent = "Durch Abstoßung (δ⁻ stößt Elektronen weg) bzw. Anziehung (δ⁺ zieht Elektronen an) induziert der erste Dipol laufend einen gleichsinnigen temporären Dipol im Nachbarteilchen.";
     } else {
-      // Phase 4: Elektrostatische Anziehung = London-WW
-      const effShift = (Math.abs(shift) < 0.25 ? 0.55 : Math.abs(shift)) * (shift < 0 ? -1 : 1);
+      // Phase 4: Elektrostatische Anziehung = London-WW (continuous sinusoidal glide through 0)
+      const effShift = shift;
       const x1 = 248;
       const x2 = 412;
       const cy = 142;
@@ -2387,31 +2419,39 @@
       drawPolarizableSphere(ctx, x1, cy, 52, effShift, pal);
       drawPolarizableSphere(ctx, x2, cy, 52, effShift, pal);
 
-      // Dotted electrostatic attraction lines between x1+52 and x2-52
-      ctx.save();
-      ctx.strokeStyle = pal.warn;
-      ctx.lineWidth = 3;
-      ctx.setLineDash([4, 4]);
-      [-18, 0, 18].forEach((dy) => {
-        ctx.beginPath();
-        ctx.moveTo(x1 + 54, cy + dy);
-        ctx.lineTo(x2 - 54, cy + dy);
-        ctx.stroke();
-      });
-      ctx.restore();
+      // Dotted electrostatic attraction lines fade smoothly with dipole amplitude
+      const forceAlpha = Math.max(0, Math.min(1, (absShift - 0.06) / 0.35));
+      if (forceAlpha > 0.01) {
+        ctx.save();
+        ctx.globalAlpha = forceAlpha;
+        ctx.strokeStyle = pal.warn;
+        ctx.lineWidth = 1.4 + 2.0 * forceAlpha;
+        ctx.setLineDash([4, 4]);
+        [-18, 0, 18].forEach((dy) => {
+          ctx.beginPath();
+          ctx.moveTo(x1 + 54, cy + dy);
+          ctx.lineTo(x2 - 54, cy + dy);
+          ctx.stroke();
+        });
+        ctx.restore();
+      }
 
-      // Attraction badge above (matches current polarity direction)
-      drawRoundedRect(ctx, w / 2 - 140, 22, 280, 32, 999);
+      // Attraction badge above
+      drawRoundedRect(ctx, w / 2 - 148, 22, 296, 32, 999);
       ctx.fillStyle = pal.surface;
       ctx.fill();
-      ctx.strokeStyle = pal.warn;
+      ctx.strokeStyle = absShift < 0.08 ? pal.border : pal.warn;
       ctx.lineWidth = 2;
       ctx.stroke();
-      ctx.fillStyle = pal.warn;
+      ctx.fillStyle = absShift < 0.08 ? pal.muted : pal.warn;
       ctx.font = `800 12.5px ${CANVAS_FONT}`;
       ctx.textAlign = "center";
       ctx.fillText(
-        effShift >= 0 ? "⚡ London-WW: δ⁻ ··· δ⁺ Anziehung!" : "⚡ London-WW: δ⁺ ··· δ⁻ Anziehung!",
+        absShift < 0.08
+          ? "⚡ Umkehrpunkt (Dipol baut sich neu auf)"
+          : effShift >= 0
+          ? "⚡ London-WW: δ⁻ ··· δ⁺ Anziehung!"
+          : "⚡ London-WW: δ⁺ ··· δ⁻ Anziehung!",
         w / 2,
         42
       );
